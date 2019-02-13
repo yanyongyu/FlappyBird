@@ -20,13 +20,14 @@ RANDOM_RECT = None
 PIPEGAPSIZE = 100
 PIPE_INDEX = None
 
+
 class UPipe(pygame.sprite.Sprite):
     def __init__(self, bg_size, location):
         global RANDOM_RECT
         pygame.sprite.Sprite.__init__(self)
         self.image = UPIPE_IMAGE[PIPE_INDEX].convert_alpha()
         self.mask = pygame.mask.from_surface(self.image)
-        
+
         self.width, self.height = bg_size
         self.rect = self.image.get_rect()
         self.rect.top = RANDOM_RECT - self.rect.height
@@ -34,17 +35,18 @@ class UPipe(pygame.sprite.Sprite):
             self.rect.left = location
         else:
             self.rect.left = self.width + 10
-        
+
     def move(self):
         self.rect.left -= 4
-        
+
+
 class DPipe(pygame.sprite.Sprite):
     def __init__(self, bg_size, location):
         global RANDOM_RECT
         pygame.sprite.Sprite.__init__(self)
         self.image = DPIPE_IMAGE[PIPE_INDEX].convert_alpha()
         self.mask = pygame.mask.from_surface(self.image)
-        
+
         self.width, self.height = bg_size
         self.rect = self.image.get_rect()
         self.rect.top = RANDOM_RECT + PIPEGAPSIZE
@@ -52,9 +54,10 @@ class DPipe(pygame.sprite.Sprite):
             self.rect.left = location
         else:
             self.rect.left = self.width + 10
-        
+
     def move(self):
         self.rect.left -= 4
+
 
 def get_pipe(bg_size, landy, location=None):
     global RANDOM_RECT

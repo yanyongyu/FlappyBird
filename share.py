@@ -17,7 +17,7 @@ if "win" in sys.platform:
     import win32con
     import win32clipboard
     from io import BytesIO
-            
+
     def copy(image):
         """
         Only work on Windows.
@@ -34,6 +34,7 @@ if "win" in sys.platform:
         win32clipboard.EmptyClipboard()
         win32clipboard.SetClipboardData(win32con.CF_DIB, data)
         win32clipboard.CloseClipboard()
+
 
 # 保存图片
 def save(image):

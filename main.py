@@ -281,10 +281,10 @@ class Game():
 
     def init_vars(self, ai=False):
         # 读取设置
-        self.bird_color,
-        self.background_index,
-        self.volume,
-        self.sound_volume = setting.read_config()
+        (self.bird_color,
+         self.background_index,
+         self.volume,
+         self.sound_volume) = setting.read_config()
 
         # 设置音量
         for i in self.sound.keys():

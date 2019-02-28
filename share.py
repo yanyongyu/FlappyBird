@@ -5,10 +5,22 @@ Author: yanyongyu
 """
 
 __author__ = "yanyongyu"
-__all__ = ["copy", "save"]
+__all__ = ["copy", "save", "Email"]
 
+import re
 import sys
 import time
+from tkinter import *
+from tkinter.ttk import *
+from tkinter import messagebox
+
+import smtplib
+from email import encoders
+from email.header import Header
+from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
+from email.mime.text import MIMEText
+from email.utils import parseaddr, formataddr
 
 from PIL import Image
 
@@ -34,12 +46,159 @@ if "win" in sys.platform:
         win32clipboard.EmptyClipboard()
         win32clipboard.SetClipboardData(win32con.CF_DIB, data)
         win32clipboard.CloseClipboard()
+        root = Tk()
+        root.withdraw()
+        messagebox.showinfo("Flappy Bird", "复制成功！")
 
 
 # 保存图片
 def save(image):
     """Save the image to local path."""
-    img = Image.fromarray(image)
+    img = Image.fromarray(image).convert("RGB")
     img = img.transpose(Image.ROTATE_270)
     img = img.transpose(Image.FLIP_LEFT_RIGHT)
     img.save("%s.jpg" % round(time.time()))
+    root = Tk()
+    root.withdraw()
+    messagebox.showinfo("Flappy Bird", "保存成功！")
+
+
+class AutoShowScrollbar(Scrollbar):
+    # 如果不需要滚动条则会自动隐藏
+    def set(self, lo, hi):
+        if float(lo) <= 0.0 and float(hi) >= 1.0:
+            # grid_remove is currently missing from Tkinter!
+            self.tk.call("pack", "forget", self)
+        else:
+            self.pack(fill=Y, side=RIGHT, expand=False)
+        Scrollbar.set(self, lo, hi)
+
+
+class Email():
+    """Make a email to others."""
+    def __init__(self, image, score):
+        self.score = score
+        img = Image.fromarray(image)
+        img = img.transpose(Image.ROTATE_270)
+        self.img = img.transpose(Image.FLIP_LEFT_RIGHT)
+        self.email_check = re.compile(r"^[\w]+\.?[\w]+@([\w]+)((\.\w{2,3}){1,3})$")
+        self.show()
+
+    def show(self):
+        self.root = Tk()
+        self.root.title("email share")
+        sw = self.root.winfo_screenwidth()
+        sh = self.root.winfo_screenheight()
+        x = (sw - 400) / 2 - 25
+        y = (sh - 250) / 2 - 25
+        self.root.geometry('%dx%d+%d+%d' % (400, 250, x, y))
+        self.root.resizable(False, False)
+        self.root.iconbitmap("images/flappy.ico")
+
+        # 邮件信息框架
+        frame1 = Frame(self.root)
+        frame1.pack(fill=BOTH)
+        # 调整entry列权重，使其拉伸
+        frame1.columnconfigure(1, weight=1)
+
+        # 发件人邮箱输入行
+        label1 = Label(frame1, text="发件人邮箱：")
+        label1.grid(row=0, column=0, padx=2, pady=4, sticky=W+N+S)
+        self.send_email = StringVar()
+        entry1 = Entry(frame1, textvariable=self.send_email)
+        entry1.grid(row=0, column=1, padx=2, pady=4, sticky=E+N+S+W)
+
+        # 发件人邮箱密码输入行
+        label2 = Label(frame1, text="发件人密码：")
+        label2.grid(row=1, column=0, padx=2, pady=4, sticky=W+N+S)
+        self.send_pw = StringVar()
+        self.entry2 = Entry(frame1, textvariable=self.send_pw, show='*')
+        self.entry2.grid(row=1, column=1, padx=2, pady=4, sticky=E+N+S+W)
+        self.v = IntVar()
+        cb = Checkbutton(frame1, text='显示密码', variable=self.v)
+        cb.grid(row=1, column=2, padx=2, pady=4, sticky=E+N+S)
+        cb.bind('<ButtonRelease-1>', self.check_show)
+
+        # 收件人邮箱输入行
+        label3 = Label(frame1, text="收件人邮箱：")
+        label3.grid(row=2, column=0, padx=2, pady=4, sticky=W+N+S)
+        self.target_email = StringVar()
+        entry3 = Entry(frame1, textvariable=self.target_email)
+        entry3.grid(row=2, column=1, padx=2, pady=4, sticky=E+N+S+W)
+
+        # 邮件内容输入框架
+        frame2 = Frame(self.root)
+        frame2.pack(fill=BOTH, expand=True)
+
+        # 邮件内容输入
+        self.text = Text(frame2, width=40, height=5, borderwidth=3, font=('微软雅黑', 12))
+        self.text.pack(padx=2, pady=5, side=LEFT, fill=BOTH, expand=True)
+        self.text.insert(1.0, "我在玩Flappy Bird小游戏，取得了%s分的好成绩哟" % self.score)
+        vbar_y = AutoShowScrollbar(frame2, orient=VERTICAL)
+        vbar_y.pack(fill=Y, side=RIGHT, expand=False)
+        vbar_y.config(command=self.text.yview)
+        self.text.configure(yscrollcommand=vbar_y.set)
+
+        # 界面鼠标滚动
+        def _scroll_text(event):
+            self.text.yview_scroll(int(-event.delta / 120), 'units')
+        self.text.bind('<MouseWheel>', _scroll_text)
+
+        # 点击发送按钮
+        button = Button(self.root, text="点击发送", command=self.send)
+        button.pack(pady=4, side=BOTTOM)
+
+        self.root.mainloop()
+
+    def check_show(self, event):
+        show = self.v.get()
+        if show == 0:
+            self.entry2['show'] = ''
+        else:
+            self.entry2['show'] = '*'
+
+    def _format_addr(self, s):
+        name, addr = parseaddr(s)
+        return formataddr((Header(name, 'utf-8').encode(), addr))
+
+    def send(self):
+        from_addr = self.send_email.get()
+        to_addr = self.target_email.get()
+        if (not self.email_check.match(from_addr)
+                and not self.email_check.match(to_addr)):
+            print("error")
+            return
+        group = self.email_check.match(from_addr).groups()
+        password = self.send_pw.get()
+        smtp_server = "smtp.126.com"
+
+        msg = MIMEMultipart()
+        msg.attach(MIMEText(
+                '<html><body><h1>%s</h1>' % self.text.get(1.0, END) +
+                '<img src="cid:flappy" alt="flappy"' +
+                '<p>Coding Email...</p>' +
+                '<p>send by <a href="http://www.python.org">Python</a> app...</p>' +
+                '</body></html>', 'html', 'utf-8'))
+        msg['From'] = self._format_addr('Python爱好者 <%s>' % from_addr)
+        msg['To'] = self._format_addr('管理员 <%s>' % to_addr)
+        msg['Subject'] = Header('来自Python大佬的问候', 'utf-8').encode()
+
+        # 设置附件的MIME和文件名，这里是jpg类型:
+        output = BytesIO()
+        self.img.convert("RGB").save(output, "JPEG")
+        mime = MIMEImage(output.getvalue(), _subtype="JPEG")
+        output.close()
+        mime.add_header('Content-ID', 'flappy')
+        mime.add_header('Content-Disposition', 'attachment', filename='%s.jpg' % round(time.time()))
+        # 添加到MIMEMultipart:
+        msg.attach(mime)
+
+        server = smtplib.SMTP(smtp_server, 25)
+        server.set_debuglevel(1)
+        server.login(from_addr, password)
+        server.sendmail(from_addr, [to_addr], msg.as_string())
+        server.quit()
+
+
+if __name__ == '__main__':
+    Email("", 0)

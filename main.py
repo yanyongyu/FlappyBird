@@ -689,7 +689,7 @@ class Game():
                             elif self.save_rect.collidepoint(pos):
                                 share.save(self.image_data)
                             elif self.email_rect.collidepoint(pos):
-                                share.Email(self.image_data, self.score)
+                                share.send_email(self.image_data, self.score)
                             elif self.back_rect.collidepoint(pos):
                                 self.share = False
 

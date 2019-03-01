@@ -5,17 +5,18 @@ Author: yanyongyu
 """
 
 __author__ = "yanyongyu"
-__all__ = ["copy", "save", "Email"]
+__all__ = ["copy", "save", "send_email"]
 
 import re
 import sys
 import time
+import logging
+import threading
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import messagebox
 
 import smtplib
-from email import encoders
 from email.header import Header
 from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
@@ -23,6 +24,8 @@ from email.mime.text import MIMEText
 from email.utils import parseaddr, formataddr
 
 from PIL import Image
+
+logging.basicConfig(level=logging.INFO)
 
 # 复制到剪切板
 if "win" in sys.platform:
@@ -46,6 +49,7 @@ if "win" in sys.platform:
         win32clipboard.EmptyClipboard()
         win32clipboard.SetClipboardData(win32con.CF_DIB, data)
         win32clipboard.CloseClipboard()
+        logging.info("Copied successfully")
         root = Tk()
         root.withdraw()
         messagebox.showinfo("Flappy Bird", "复制成功！")
@@ -58,9 +62,19 @@ def save(image):
     img = img.transpose(Image.ROTATE_270)
     img = img.transpose(Image.FLIP_LEFT_RIGHT)
     img.save("%s.jpg" % round(time.time()))
+    logging.info("Saved successfully")
     root = Tk()
     root.withdraw()
     messagebox.showinfo("Flappy Bird", "保存成功！")
+
+
+def send_email(image_data, score):
+    start_thread(Email, image_data, score)
+
+
+def start_thread(target, *args, **kw):
+    t = threading.Thread(target=target, args=args, kwargs=kw)
+    t.start()
 
 
 class AutoShowScrollbar(Scrollbar):
@@ -75,13 +89,26 @@ class AutoShowScrollbar(Scrollbar):
 
 
 class Email():
-    """Make a email to others."""
+    """Make a email share to others."""
+    html_text = (
+        '<html><body><h1>%s</h1>' +
+        '<h2>游戏源码地址：' +
+        '<a href="https://github.com/yanyongyu/FlappyBird">GitHub</a></h2>' +
+        '<a><img src="cid:flappy" alt="flappy"></a>' +
+        '<p>Coding Email...</p>' +
+        '<p>send by <a href="http://www.python.org">Python</a> app...</p>' +
+        '</body></html>')
+
+    smtp_servers = {'126': 'smtp.126.com', 'qq': 'smtp.qq.com'}
+
     def __init__(self, image, score):
         self.score = score
         img = Image.fromarray(image)
         img = img.transpose(Image.ROTATE_270)
         self.img = img.transpose(Image.FLIP_LEFT_RIGHT)
-        self.email_check = re.compile(r"^[\w]+\.?[\w]+@([\w]+)((\.\w{2,3}){1,3})$")
+        self.email_check = re.compile(
+                r"^[\w]+\.?[\w]+@([\w]+)((\.\w{2,3}){1,3})$")
+        logging.info("Show email window")
         self.show()
 
     def show(self):
@@ -131,9 +158,12 @@ class Email():
         frame2.pack(fill=BOTH, expand=True)
 
         # 邮件内容输入
-        self.text = Text(frame2, width=40, height=5, borderwidth=3, font=('微软雅黑', 12))
+        self.text = Text(frame2, width=40, height=5,
+                         borderwidth=3, font=('微软雅黑', 12))
         self.text.pack(padx=2, pady=5, side=LEFT, fill=BOTH, expand=True)
-        self.text.insert(1.0, "我在玩Flappy Bird小游戏，取得了%s分的好成绩哟" % self.score)
+        self.text.insert(
+                1.0,
+                "我在玩Flappy Bird小游戏，取得了%s分的好成绩哟" % self.score)
         vbar_y = AutoShowScrollbar(frame2, orient=VERTICAL)
         vbar_y.pack(fill=Y, side=RIGHT, expand=False)
         vbar_y.config(command=self.text.yview)
@@ -145,7 +175,8 @@ class Email():
         self.text.bind('<MouseWheel>', _scroll_text)
 
         # 点击发送按钮
-        button = Button(self.root, text="点击发送", command=self.send)
+        button = Button(self.root, text="点击发送",
+                        command=lambda: start_thread(self.send))
         button.pack(pady=4, side=BOTTOM)
 
         self.root.mainloop()
@@ -162,42 +193,51 @@ class Email():
         return formataddr((Header(name, 'utf-8').encode(), addr))
 
     def send(self):
+        logging.info("Start send email")
         from_addr = self.send_email.get()
         to_addr = self.target_email.get()
+        logging.info("From email address: %s" % from_addr)
+        logging.info("To email address: %s" % to_addr)
         if (not self.email_check.match(from_addr)
-                and not self.email_check.match(to_addr)):
-            print("error")
+                or not self.email_check.match(to_addr)):
+            messagebox.showerror("Flappy Bird", "请检查邮箱格式！")
             return
         group = self.email_check.match(from_addr).groups()
         password = self.send_pw.get()
-        smtp_server = "smtp.126.com"
+        smtp_server = Email.smtp_servers[group[0]]
+        logging.info("SMTP server: %s" % smtp_server)
 
         msg = MIMEMultipart()
-        msg.attach(MIMEText(
-                '<html><body><h1>%s</h1>' % self.text.get(1.0, END) +
-                '<img src="cid:flappy" alt="flappy"' +
-                '<p>Coding Email...</p>' +
-                '<p>send by <a href="http://www.python.org">Python</a> app...</p>' +
-                '</body></html>', 'html', 'utf-8'))
+        msg.attach(MIMEText(Email.html_text % self.text.get(1.0, END),
+                            'html', 'utf-8'))
         msg['From'] = self._format_addr('Python爱好者 <%s>' % from_addr)
         msg['To'] = self._format_addr('管理员 <%s>' % to_addr)
         msg['Subject'] = Header('来自Python大佬的问候', 'utf-8').encode()
 
         # 设置附件的MIME和文件名，这里是jpg类型:
+        logging.info("Write jpg picture into email")
         output = BytesIO()
         self.img.convert("RGB").save(output, "JPEG")
         mime = MIMEImage(output.getvalue(), _subtype="JPEG")
         output.close()
         mime.add_header('Content-ID', 'flappy')
-        mime.add_header('Content-Disposition', 'attachment', filename='%s.jpg' % round(time.time()))
+        mime.add_header('Content-Disposition', 'attachment',
+                        filename='%s.jpg' % round(time.time()))
         # 添加到MIMEMultipart:
         msg.attach(mime)
 
-        server = smtplib.SMTP(smtp_server, 25)
-        server.set_debuglevel(1)
-        server.login(from_addr, password)
-        server.sendmail(from_addr, [to_addr], msg.as_string())
-        server.quit()
+        try:
+            logging.info("Send email")
+            server = smtplib.SMTP(smtp_server, 25)
+#            server.set_debuglevel(1)
+            server.login(from_addr, password)
+            server.sendmail(from_addr, [to_addr], msg.as_string())
+            server.quit()
+            logging.info("Send successfully!")
+            self.root.destroy()
+        except Exception as e:
+            logging.error("%s" % e)
+            messagebox.showerror("Flappy Bird", "%s" % e)
 
 
 if __name__ == '__main__':

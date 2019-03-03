@@ -53,6 +53,7 @@ if "win" in sys.platform:
         root = Tk()
         root.withdraw()
         messagebox.showinfo("Flappy Bird", "复制成功！")
+        root.destroy()
 
 
 # 保存图片
@@ -66,6 +67,7 @@ def save(image):
     root = Tk()
     root.withdraw()
     messagebox.showinfo("Flappy Bird", "保存成功！")
+    root.destroy()
 
 
 def send_email(image_data, score):
@@ -226,7 +228,7 @@ class Email():
                             'html', 'utf-8'))
         msg['From'] = self._format_addr('Python爱好者 <%s>' % from_addr)
         msg['To'] = self._format_addr('管理员 <%s>' % to_addr)
-        msg['Subject'] = Header('来自Python大佬的问候', 'utf-8').encode()
+        msg['Subject'] = Header('Flappy Bird', 'utf-8').encode()
 
         # 设置附件的MIME和文件名，这里是jpg类型:
         logging.info("Write jpg picture into email")

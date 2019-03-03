@@ -99,7 +99,11 @@ class Email():
         '<p>send by <a href="http://www.python.org">Python</a> app...</p>' +
         '</body></html>')
 
-    smtp_servers = {'126': 'smtp.126.com', 'qq': 'smtp.qq.com'}
+    smtp_servers = {'126': 'smtp.126.com', 'qq': 'smtp.qq.com',
+                    'sina': 'smtp.sina.com.cn', 'aliyun': 'smtp.aliyun.com',
+                    '163': 'smtp.163.com', 'yahoo': 'smtp.mail.yahoo.com',
+                    'foxmail': 'SMTP.foxmail.com', 'sohu': 'smtp.sohu.com',
+                    '139': 'SMTP.139.com', 'china': 'smtp.china.com'}
 
     def __init__(self, image, score):
         self.score = score
@@ -194,6 +198,12 @@ class Email():
 
     def send(self):
         logging.info("Start send email")
+        top = Toplevel(self.root)
+        top.geometry('100x75')
+        top.resizable(False, False)
+        lb = Label(top, text="正在发送...")
+        lb.pack(fill=BOTH)
+
         from_addr = self.send_email.get()
         to_addr = self.target_email.get()
         logging.info("From email address: %s" % from_addr)
@@ -204,8 +214,12 @@ class Email():
             return
         group = self.email_check.match(from_addr).groups()
         password = self.send_pw.get()
-        smtp_server = Email.smtp_servers[group[0]]
-        logging.info("SMTP server: %s" % smtp_server)
+        try:
+            smtp_server = Email.smtp_servers[group[0]]
+            logging.info("SMTP server: %s" % smtp_server)
+        except KeyError:
+            messagebox.showerror("Flappy Bird", "该邮箱暂不支持，请联系作者！")
+            return
 
         msg = MIMEMultipart()
         msg.attach(MIMEText(Email.html_text % self.text.get(1.0, END),
@@ -234,7 +248,9 @@ class Email():
             server.sendmail(from_addr, [to_addr], msg.as_string())
             server.quit()
             logging.info("Send successfully!")
-            self.root.destroy()
+            top.destroy()
+            if not messagebox.askyesno("Flappy Bird", "发送成功！是否继续发送？"):
+                self.root.destroy()
         except Exception as e:
             logging.error("%s" % e)
             messagebox.showerror("Flappy Bird", "%s" % e)

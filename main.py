@@ -1002,8 +1002,8 @@ class Game():
 
         if self.bird.rect.top < 0:
             self.bird.rect.top = 0
-            if input_action[1] == 1:
-                reward = -0.1
+#            if input_action[1] == 1:
+#                reward = -0.1
 
         self.bird.move(self.delay)
 

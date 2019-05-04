@@ -10,3 +10,4 @@ __pycache__
 /model/*
 !.gitignore
 !.gitkeep
+__model

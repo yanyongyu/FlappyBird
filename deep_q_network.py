@@ -25,13 +25,13 @@ FRAME_PER_ACTION = 1
 # 历史观察奖励衰减
 GAMMA = 0.99
 # 训练前观察积累论述
-OBSERVE = 10000.
+OBSERVE = 100000.
 # frames over which to anneal epsilon
-EXPLORE = 1000000.
+EXPLORE = 2000000.
 # final value of epsilon
 FINAL_EPSILON = 0.0001
 # starting value of epsilon
-INITIAL_EPSILON = 0.5
+INITIAL_EPSILON = 0.1
 # number of previous transitions to remember
 REPLAY_MEMORY = 50000
 # size of minibatch
@@ -48,8 +48,8 @@ def bias_variable(shape):
     return tf.Variable(initial)
 
 
-def conv2d(x, W):
-    return tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding="SAME")
+def conv2d(x, W, stride=1):
+    return tf.nn.conv2d(x, W, strides=[1, stride, stride, 1], padding="SAME")
 
 
 def max_pool_2x2(x):
@@ -63,46 +63,56 @@ def createNetwork():
     s = tf.placeholder(tf.float32, [None, 80, 80, 4])
 
     # 卷积层1
-    w_conv1 = weight_variable([3, 3, 4, 16])
-    b_conv1 = bias_variable([16])
-    conv1 = tf.nn.relu(conv2d(s, w_conv1) + b_conv1)
+    # w_conv1 = weight_variable([3, 3, 4, 16])
+    # b_conv1 = bias_variable([16])
+    # conv1 = tf.nn.relu(conv2d(s, w_conv1) + b_conv1)
+    w_conv1 = weight_variable([8, 8, 4, 32])
+    b_conv1 = bias_variable([32])
+    conv1 = tf.nn.relu(conv2d(s, w_conv1, 4) + b_conv1)
     pool1 = max_pool_2x2(conv1)
 
     # 卷积层2
-    w_conv2_1 = weight_variable([3, 3, 16, 32])
-    b_conv2_1 = weight_variable([32])
-    conv2_1 = tf.nn.relu(conv2d(pool1, w_conv2_1) + b_conv2_1)
+    # w_conv2_1 = weight_variable([3, 3, 16, 32])
+    # b_conv2_1 = weight_variable([32])
+    # conv2_1 = tf.nn.relu(conv2d(pool1, w_conv2_1) + b_conv2_1)
+    w_conv2 = weight_variable([4, 4, 32, 64])
+    b_conv2 = weight_variable([64])
+    conv2 = tf.nn.relu(conv2d(pool1, w_conv2, 2) + b_conv2)
 
-    w_conv2_2 = weight_variable([3, 3, 32, 32])
-    b_conv2_2 = weight_variable([32])
-    conv2_2 = tf.nn.relu(conv2d(conv2_1, w_conv2_2) + b_conv2_2)
-    pool2 = max_pool_2x2(conv2_2)
+    # w_conv2_2 = weight_variable([3, 3, 32, 32])
+    # b_conv2_2 = weight_variable([32])
+    # conv2_2 = tf.nn.relu(conv2d(conv2_1, w_conv2_2) + b_conv2_2)
+    # pool2 = max_pool_2x2(conv2_2)
 
     # 卷积层3
-    w_conv3_1 = weight_variable([3, 3, 32, 64])
-    b_conv3_1 = bias_variable([64])
-    conv3_1 = tf.nn.relu(conv2d(pool2, w_conv3_1) + b_conv3_1)
+    # w_conv3_1 = weight_variable([3, 3, 32, 64])
+    # b_conv3_1 = bias_variable([64])
+    # conv3_1 = tf.nn.relu(conv2d(pool2, w_conv3_1) + b_conv3_1)
 
-    w_conv3_2 = weight_variable([3, 3, 64, 64])
-    b_conv3_2 = bias_variable([64])
-    conv3_2 = tf.nn.relu(conv2d(conv3_1, w_conv3_2) + b_conv3_2)
+    # w_conv3_2 = weight_variable([3, 3, 64, 64])
+    # b_conv3_2 = bias_variable([64])
+    # conv3_2 = tf.nn.relu(conv2d(conv3_1, w_conv3_2) + b_conv3_2)
 
-    w_conv3_3 = weight_variable([3, 3, 64, 64])
-    b_conv3_3 = bias_variable([64])
-    conv3_3 = tf.nn.relu(conv2d(conv3_2, w_conv3_3) + b_conv3_3)
-    pool3 = max_pool_2x2(conv3_3)
+    # w_conv3_3 = weight_variable([3, 3, 64, 64])
+    # b_conv3_3 = bias_variable([64])
+    # conv3_3 = tf.nn.relu(conv2d(conv3_2, w_conv3_3) + b_conv3_3)
+    # pool3 = max_pool_2x2(conv3_3)
+    w_conv3 = weight_variable([3, 3, 64, 64])
+    b_conv3 = bias_variable([64])
+    conv3 = tf.nn.relu(conv2d(conv2, w_conv3) + b_conv3)
 
     # 拉直
-    flat = tf.reshape(pool3, [-1, 6400])
+    # flat = tf.reshape(pool3, [-1, 6400])
+    flat = tf.reshape(conv3, [-1, 1600])
 
     # 全连接层1
-    w_fc1 = weight_variable([6400, 512])
+    w_fc1 = weight_variable([1600, 512])
     b_fc1 = bias_variable([512])
     fc1 = tf.nn.relu(tf.matmul(flat, w_fc1) + b_fc1)
 
     # 全连接层2
-    w_fc2 = weight_variable([512, 2])
-    b_fc2 = bias_variable([2])
+    w_fc2 = weight_variable([512, ACTIONS])
+    b_fc2 = bias_variable([ACTIONS])
     readout = tf.matmul(fc1, w_fc2) + b_fc2
 
     return s, readout
@@ -136,6 +146,7 @@ def trainNetwork(s, readout, sess, isTrain=False):
     saver = tf.train.Saver()
     sess.run(tf.global_variables_initializer())
     checkpoint = tf.train.get_checkpoint_state("model")
+    step = 0
     if checkpoint and checkpoint.model_checkpoint_path:
         saver.restore(sess, checkpoint.model_checkpoint_path)
         step = int(checkpoint.model_checkpoint_path.split('-')[-1])
@@ -181,7 +192,8 @@ def trainNetwork(s, readout, sess, isTrain=False):
 
         if t > OBSERVE and isTrain:
             if t == OBSERVE + 1:
-                t = step
+                if step:
+                    t = step
                 epsilon = (INITIAL_EPSILON
                            - (INITIAL_EPSILON
                               - FINAL_EPSILON)
@@ -228,7 +240,9 @@ def trainNetwork(s, readout, sess, isTrain=False):
 
 
 def play():
-    sess = tf.InteractiveSession()
+    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.333)
+    sess = tf.InteractiveSession(
+            config=tf.ConfigProto(gpu_options=gpu_options))
     s, readout = createNetwork()
     trainNetwork(s, readout, sess, True)
 

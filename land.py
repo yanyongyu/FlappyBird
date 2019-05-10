@@ -19,7 +19,7 @@ class Land(pygame.sprite.Sprite):
 
         self.width, self.height = bg_size
         self.rect = self.image.get_rect()
-        self.rect.top = self.height - self.rect.height
+        self.rect.top = int(self.height * 0.79)
         self.LANDSHIFT = self.rect.width - self.width
         self.rect.left = 0
 

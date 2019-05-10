@@ -1000,12 +1000,12 @@ class Game():
             if self.bird.rect.top > -2 * self.bird.rect.height:
                 self.bird.fly()
 
+        self.bird.move(self.delay)
+
         if self.bird.rect.top < 0:
             self.bird.rect.top = 0
 #            if input_action[1] == 1:
 #                reward = -0.1
-
-        self.bird.move(self.delay)
 
         # 移动pipe
         for upipe, dpipe in zip(self.upperpipes, self.lowerpipes):

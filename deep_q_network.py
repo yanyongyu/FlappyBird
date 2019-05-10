@@ -25,13 +25,13 @@ FRAME_PER_ACTION = 1
 # 历史观察奖励衰减
 GAMMA = 0.99
 # 训练前观察积累论述
-OBSERVE = 100000.
+OBSERVE = 50000.
 # frames over which to anneal epsilon
 EXPLORE = 2000000.
 # final value of epsilon
 FINAL_EPSILON = 0.0001
 # starting value of epsilon
-INITIAL_EPSILON = 0.1
+INITIAL_EPSILON = 0.0001
 # number of previous transitions to remember
 REPLAY_MEMORY = 50000
 # size of minibatch
@@ -178,8 +178,9 @@ def trainNetwork(s, readout, sess, isTrain=False):
             epsilon -= (INITIAL_EPSILON - FINAL_EPSILON) / EXPLORE
 
         # 更新一轮模拟器图像，奖励值，是否死亡
-        x_t1, reward_t1, terminal = game.intelligence(a_t)
-        x_t1 = cv.cvtColor(cv.resize(x_t1, (80, 80)), cv.COLOR_BGR2GRAY)
+        x_t1_colored, reward_t1, terminal = game.intelligence(a_t)
+        x_t1 = cv.cvtColor(
+                cv.resize(x_t1_colored, (80, 80)), cv.COLOR_BGR2GRAY)
         ret, x_t1 = cv.threshold(x_t1, 1, 255, cv.THRESH_BINARY)
         x_t1 = np.reshape(x_t1, (80, 80, 1))
         s_t1 = np.append(x_t1, s_t[:, :, :3], axis=2)
@@ -244,7 +245,7 @@ def play():
     sess = tf.InteractiveSession(
             config=tf.ConfigProto(gpu_options=gpu_options))
     s, readout = createNetwork()
-    trainNetwork(s, readout, sess, True)
+    trainNetwork(s, readout, sess)
 
 
 if __name__ == "__main__":

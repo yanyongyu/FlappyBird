@@ -54,8 +54,8 @@ class Bird(pygame.sprite.Sprite):
         self.width, self.height = bg_size
         self.landy = landy
         self.rect = self.images[0].get_rect()
-        self.rect.left = self.width * 0.2
-        self.rect.top = (landy - self.rect.height) // 2
+        self.rect.left = int(self.width * 0.2)
+        self.rect.top = (self.height - self.rect.height) // 2
         self.center = self.rect.centerx, self.rect.centery
 
         self.alive = True

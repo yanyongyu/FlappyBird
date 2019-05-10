@@ -61,5 +61,7 @@ class DPipe(pygame.sprite.Sprite):
 
 def get_pipe(bg_size, landy, location=None):
     global RANDOM_RECT
-    RANDOM_RECT = random.randint(0.2*landy, 0.8*landy - PIPEGAPSIZE)
+    gapYs = [20, 30, 40, 50, 60, 70, 80, 90]
+#    RANDOM_RECT = random.randint(0.2*landy, 0.8*landy - PIPEGAPSIZE)
+    RANDOM_RECT = gapYs[random.randint(0, len(gapYs)-1)] + int(0.2*landy)
     return UPipe(bg_size, location), DPipe(bg_size, location)

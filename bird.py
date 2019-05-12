@@ -13,6 +13,8 @@ from itertools import cycle
 
 import pygame
 
+from utils import getHitmask
+
 image = (
         [pygame.image.load("images/birds/bird0_0.png"),
          pygame.image.load("images/birds/bird0_1.png"),
@@ -50,6 +52,8 @@ class Bird(pygame.sprite.Sprite):
                                        image[random.choice([0, 1, 2])]))
         self.image_index_cycle = cycle([0, 1, 2, 1])
         self.index = next(self.image_index_cycle)
+        self.image = self.images[self.index]
+        self.mask = getHitmask(self.image)
 
         self.width, self.height = bg_size
         self.landy = landy
@@ -95,7 +99,7 @@ class Bird(pygame.sprite.Sprite):
     def move(self, delay):
         if self.ai:
             self.image = self.images[self.image_index(delay)]
-            self.mask = pygame.mask.from_surface(self.image)
+            self.mask = getHitmask(self.image)
             self.center = self.rect.centerx, self.rect.centery
             self.rect = self.image.get_rect()
             self.rect.centerx, self.rect.centery = self.center
@@ -106,7 +110,7 @@ class Bird(pygame.sprite.Sprite):
                         self.images[self.image_index(delay)],
                         self.rotate
                         )
-                self.mask = pygame.mask.from_surface(self.image)
+                self.mask = getHitmask(self.image)
                 self.center = self.rect.centerx, self.rect.centery
                 self.rect = self.image.get_rect()
                 self.rect.centerx, self.rect.centery = self.center

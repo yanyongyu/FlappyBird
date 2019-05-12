@@ -10,12 +10,14 @@ __all__ = ["Land"]
 
 import pygame
 
+from utils import getHitmask
+
 
 class Land(pygame.sprite.Sprite):
     def __init__(self, bg_size):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("images/land.png").convert()
-        self.mask = pygame.mask.from_surface(self.image)
+        self.mask = getHitmask(self.image)
 
         self.width, self.height = bg_size
         self.rect = self.image.get_rect()

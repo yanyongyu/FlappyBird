@@ -12,6 +12,8 @@ import random
 
 import pygame
 
+from utils import getHitmask
+
 UPIPE_IMAGE = [pygame.image.load("images/game/pipe_down.png"),
                pygame.image.load("images/game/pipe2_down.png")]
 DPIPE_IMAGE = [pygame.image.load("images/game/pipe_up.png"),
@@ -26,7 +28,7 @@ class UPipe(pygame.sprite.Sprite):
         global RANDOM_RECT
         pygame.sprite.Sprite.__init__(self)
         self.image = UPIPE_IMAGE[PIPE_INDEX].convert_alpha()
-        self.mask = pygame.mask.from_surface(self.image)
+        self.mask = getHitmask(self.image)
 
         self.width, self.height = bg_size
         self.rect = self.image.get_rect()
@@ -45,7 +47,7 @@ class DPipe(pygame.sprite.Sprite):
         global RANDOM_RECT
         pygame.sprite.Sprite.__init__(self)
         self.image = DPIPE_IMAGE[PIPE_INDEX].convert_alpha()
-        self.mask = pygame.mask.from_surface(self.image)
+        self.mask = getHitmask(self.image)
 
         self.width, self.height = bg_size
         self.rect = self.image.get_rect()

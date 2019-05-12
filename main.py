@@ -22,6 +22,7 @@ import pipe
 import score
 import share
 import setting
+from utils import pixelCollision
 
 
 class Game():
@@ -410,6 +411,35 @@ class Game():
 
         # 分享画面
         self.share = False
+
+    def checkCrash(self):
+        # if player crashes into ground
+        if self.bird.rect.top + self.bird.rect.height\
+                >= self.land.rect.top + 1:
+            return True
+
+        playerRect = self.bird.rect
+
+        for uPipe, lPipe in zip(self.upperpipes, self.lowerpipes):
+            # upper and lower pipe rects
+            uPipeRect = uPipe.rect
+            lPipeRect = lPipe.rect
+
+            # player and upper/lower pipe hitmasks
+            pHitMask = self.bird.mask
+            uHitmask = uPipe.mask
+            lHitmask = lPipe.mask
+
+            # if bird collided with upipe or lpipe
+            uCollide = pixelCollision(
+                    playerRect, uPipeRect, pHitMask, uHitmask)
+            lCollide = pixelCollision(
+                    playerRect, lPipeRect, pHitMask, lHitmask)
+
+            if uCollide or lCollide:
+                return True
+
+        return False
 
     def play(self):
         while True:
@@ -914,25 +944,29 @@ class Game():
                                 self.score += 1
                                 self.sound['point_sound'].play()
 
-                # 检测碰撞
-                    # 地面碰撞
-                    if (self.bird.alive
-                            and self.bird.rect.top + self.bird.rect.height
-                            >= self.land.rect.top + 20):
+                    # 检测碰撞
+                    if self.bird.alive and self.checkCrash():
                         self.bird.alive = False
                         self.sound['hit_sound'].play()
                         self.sound['die_sound'].play()
-
-                    # pipe碰撞
-                    if (self.bird.alive
-                            and pygame.sprite.spritecollide(
-                                    self.bird,
-                                    self.pipe_group,
-                                    False, pygame.sprite.collide_mask
-                                    )):
-                        self.bird.alive = False
-                        self.sound['hit_sound'].play()
-                        self.sound['die_sound'].play()
+#                    # 地面碰撞
+#                    if (self.bird.alive
+#                            and self.bird.rect.top + self.bird.rect.height
+#                            >= self.land.rect.top + 20):
+#                        self.bird.alive = False
+#                        self.sound['hit_sound'].play()
+#                        self.sound['die_sound'].play()
+#
+#                    # pipe碰撞
+#                    if self.bird.alive\
+#                            and pygame.sprite.spritecollide(
+#                                    self.bird,
+#                                    self.pipe_group,
+#                                    False, pygame.sprite.collide_mask
+#                                    ):
+#                        self.bird.alive = False
+#                        self.sound['hit_sound'].play()
+#                        self.sound['die_sound'].play()
 
 # ===============================游戏结束画面==================================
                     if not self.bird.alive:
@@ -1034,23 +1068,27 @@ class Game():
                     reward = 1
 
         # 地面碰撞
-        if (self.bird.alive
-                and self.bird.rect.top + self.bird.rect.height
-                >= self.land.rect.top + 20):
+        if self.bird.alive and self.checkCrash():
             self.bird.alive = False
             self.init_vars(ai=True)
             reward = -1
-
-        # pipe碰撞
-        if (self.bird.alive
-            and pygame.sprite.spritecollide(
-                    self.bird,
-                    self.pipe_group,
-                    False, pygame.sprite.collide_mask
-                    )):
-            self.bird.alive = False
-            self.init_vars(ai=True)
-            reward = -1
+#        if (self.bird.alive
+#                and self.bird.rect.top + self.bird.rect.height
+#                >= self.land.rect.top + 20):
+#            self.bird.alive = False
+#            self.init_vars(ai=True)
+#            reward = -1
+#
+#        # pipe碰撞
+#        if (self.bird.alive
+#            and pygame.sprite.spritecollide(
+#                    self.bird,
+#                    self.pipe_group,
+#                    False, pygame.sprite.collide_mask
+#                    )):
+#            self.bird.alive = False
+#            self.init_vars(ai=True)
+#            reward = -1
 
         self.screen.blit(self.bg_black, (0, 0))
 
@@ -1071,7 +1109,7 @@ class Game():
 
         image_data = pygame.surfarray.array3d(pygame.display.get_surface())
 
-        # score.display(self.screen, self.bg_size, self.score)
+        score.display(self.screen, self.bg_size, self.score)
         pygame.display.update()
 
         self.clock.tick(30)

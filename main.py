@@ -47,20 +47,25 @@ class Game():
     def init_sound(self):
         self.sound = {}
         self.sound_default = {}
+        # 背景音乐
+        self.bgm = pygame.mixer.music.load("sound/bgm.ogg")
+        pygame.mixer.music.set_volume(0.4)
+        pygame.mixer.music.play(-1)
+
         # 死亡声音
-        self.sound['die_sound'] = pygame.mixer.Sound("sound/die.wav")
+        self.sound['die_sound'] = pygame.mixer.Sound("sound/die.ogg")
         self.sound_default['die_sound'] = 0.4
 
         # 撞击声音
-        self.sound['hit_sound'] = pygame.mixer.Sound("sound/hit.wav")
+        self.sound['hit_sound'] = pygame.mixer.Sound("sound/hit.ogg")
         self.sound_default['hit_sound'] = 0.4
 
         # 得分声音
-        self.sound['point_sound'] = pygame.mixer.Sound("sound/point.wav")
+        self.sound['point_sound'] = pygame.mixer.Sound("sound/point.ogg")
         self.sound_default['point_sound'] = 0.4
 
         # 拍翅膀声音
-        self.sound['wing_sound'] = pygame.mixer.Sound("sound/wing.wav")
+        self.sound['wing_sound'] = pygame.mixer.Sound("sound/wing.ogg")
         self.sound_default['wing_sound'] = 0.8
 
     def init_pics(self):
@@ -288,6 +293,7 @@ class Game():
          self.sound_volume) = setting.read_config()
 
         # 设置音量
+        pygame.mixer.music.set_volume(self.volume * 0.4 / 100)
         for i in self.sound.keys():
             self.sound[i].set_volume(
                     self.sound_volume
@@ -539,6 +545,8 @@ class Game():
                         elif pygame.Rect(105, 352, 110, 15).collidepoint(pos):
                             self.volume = (pos[0]-105) * 100 / 110
                             self.volume_set.set_point(self.volume / 100)
+                            pygame.mixer.music.set_volume(
+                                    self.volume * 0.4 / 100)
                         elif pygame.Rect(105, 402, 110, 15).collidepoint(pos):
                             self.sound_volume = (pos[0]-105) * 100 / 110
                             self.sound_set.set_point(self.sound_volume / 100)
@@ -702,12 +710,19 @@ class Game():
                                 self.mouse_down = True
                                 self.volume = (pos[0]-105) * 100 / 110
                                 self.volume_set.set_point(self.volume / 100)
+                                pygame.mixer.music.set_volume(
+                                        self.volume * 0.4 / 100)
                             elif pygame.Rect(105, 402, 110, 15)\
                                     .collidepoint(pos):
                                 self.mouse_down = True
                                 self.sound_volume = (pos[0]-105) * 100 / 110
                                 self.sound_set.set_point(self.sound_volume
                                                          / 100)
+                                for i in self.sound.keys():
+                                    self.sound[i].set_volume(
+                                            self.sound_volume
+                                            * self.sound_default[i]
+                                            / 100)
 
                         # 分享画面
                         elif self.share:

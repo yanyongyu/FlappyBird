@@ -1128,7 +1128,7 @@ class Game():
         pygame.display.update()
 
         self.clock.tick(30)
-        return image_data, reward, self.bird.alive
+        return image_data, reward, not self.bird.alive
 
 # =============================================================================
 # =============================================================================

@@ -19,6 +19,7 @@ logging.basicConfig(level=logging.INFO)
 
 GAME = "FlappyBird"
 MODEL_SAVE_PATH = "ddqn_model"
+LOG_SAVE_PATH = "ddqn_logs"
 # 动作数量
 ACTIONS = 2
 FRAME_PER_ACTION = 1
@@ -291,7 +292,8 @@ class DoubleDQN(object):
             self.timeStep += 1
 
             # save network every 1,000 iteration
-            if self.timeStep % 1000 == 0 and self.isTrain:
+            if self.timeStep % 1000 == 0\
+                    and self.timeStep > OBSERVE and self.isTrain:
                 self.saver.save(self.sess,
                                 f"{MODEL_SAVE_PATH}/{GAME}-dqn",
                                 global_step=self.timeStep)

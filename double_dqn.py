@@ -265,7 +265,7 @@ class DoubleDQN(object):
 
     def start_train(self):
         self.currentState = self.set_initial_state()
-        self.writer = tf.summary.FileWriter('logs/', self.sess.graph)
+        self.writer = tf.summary.FileWriter(LOG_SAVE_PATH, self.sess.graph)
         self.merged = tf.summary.merge_all()
         while True:
             action, action_index = self.getAction()

@@ -8,8 +8,7 @@ __pycache__
 *.db
 *.json
 
-/model/*
-/logs/*
+/*logs/*
 
 /dist/*
 /build/*

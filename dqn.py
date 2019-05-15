@@ -1,10 +1,8 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Mon May 13 21:56:48 2019
 Author: yan
 """
-
 __author__ = "yanyongyu"
 
 import random
@@ -32,9 +30,9 @@ OBSERVE = 50000.
 # frames over which to anneal epsilon
 EXPLORE = 2000000.
 # final value of epsilon
-FINAL_EPSILON = 0.0001
+FINAL_EPSILON = 0.
 # starting value of epsilon
-INITIAL_EPSILON = 0.1
+INITIAL_EPSILON = 0.03
 # number of previous transitions to remember
 REPLAY_MEMORY = 50000
 # size of minibatch
@@ -108,8 +106,8 @@ class DQN(object):
             logging.info("Could not find old network weights")
 
     def getAction(self):
-        self.readout = self.readout_e.eval(
-                feed_dict={self.eval_net_input: [self.currentState]})[0]
+        self.readout = self.net_readout.eval(
+                feed_dict={self.net_input: [self.currentState]})[0]
         action = np.zeros(ACTIONS)
         action_index = 0
         if self.timeStep % FRAME_PER_ACTION == 0:
@@ -181,7 +179,7 @@ class DQN(object):
         # 全连接层2
         w_fc2 = self.weight_variable([512, ACTIONS])
         b_fc2 = self.bias_variable([ACTIONS])
-        self.readout = tf.matmul(fc1, w_fc2) + b_fc2
+        self.net_readout = tf.matmul(fc1, w_fc2) + b_fc2
 
         # build train network
         self.action_input = tf.placeholder("float", [None, ACTIONS])
@@ -189,15 +187,13 @@ class DQN(object):
 
         # readout_action -- reward of selected action by a.
         self.q_eval = tf.reduce_sum(
-                tf.multiply(self.readout, self.action_input), axis=1)
+                tf.multiply(self.net_readout, self.action_input), axis=1)
         self.cost = tf.reduce_mean(tf.square(self.q_target - self.q_eval))
         tf.summary.scalar('loss', self.cost)
         self.train_step = tf.train.AdamOptimizer(1e-6).minimize(self.cost)
 
     def train_network(self):
         # Train the network
-        if self.timeStep % 500 == 0:
-            self.sess.run(self.target_replace_op)
         # Step1: obtain random minibatch from replay memory
         minibatch = random.sample(self.replayMemory, BATCH)
         state_batch = [data[0] for data in minibatch]
@@ -207,13 +203,8 @@ class DQN(object):
 
         # Step2: calculate q_target
         q_target = []
-        readout_j1_batch = self.readout_t.eval(
-                feed_dict={self.target_net_input: next_state_batch})
-        readout_j1_batch_for_action = self.readout_e.eval(
-                feed_dict={self.eval_net_input: next_state_batch})
-        max_act4next = np.argmax(readout_j1_batch_for_action, axis=1)
-        selected_q_next = \
-            readout_j1_batch[range(len(max_act4next)), max_act4next]
+        selected_q_next = self.net_readout.eval(
+                feed_dict={self.net_input: next_state_batch})
 
         for i in range(BATCH):
             terminal = minibatch[i][4]

@@ -9,7 +9,6 @@ __pycache__
 *.json
 
 /model/*
-/ddqn_model/*
 /logs/*
 
 /dist/*

@@ -73,9 +73,9 @@ class Game():
         self.bg_black = pygame.image.load("images/bg_black.png")\
             .convert_alpha()
         self.background_list = [
-                pygame.image.load("images/bg_day.png").convert(),
-                pygame.image.load("images/bg_night.png").convert()
-                ]
+            pygame.image.load("images/bg_day.png").convert(),
+            pygame.image.load("images/bg_night.png").convert()
+        ]
         self.land = land.Land(self.bg_size)
 
         # 游戏开始画面
@@ -117,7 +117,7 @@ class Game():
             pygame.image.load("images/rank/gold_cup.png").convert_alpha(),
             pygame.image.load("images/rank/silver_cup.png").convert_alpha(),
             pygame.image.load("images/rank/brooze_cup.png").convert_alpha()
-            ]
+        ]
         self.cup_rects = [(50, 120), (50, 200), (50, 280)]
 
         # 字体
@@ -144,9 +144,10 @@ class Game():
 
         # 随机小鸟设置
         self.random_bird = [
-                pygame.image.load("images/birds/random_0.png").convert_alpha(),
-                pygame.image.load("images/birds/random_1.png").convert_alpha(),
-                pygame.image.load("images/birds/random_2.png").convert_alpha()]
+            pygame.image.load("images/birds/random_0.png").convert_alpha(),
+            pygame.image.load("images/birds/random_1.png").convert_alpha(),
+            pygame.image.load("images/birds/random_2.png").convert_alpha()
+        ]
         # 自定义小鸟设置
         self.body_text = self.setting_font.render("身体", True, (0, 0, 0))
         self.mouth_text = self.setting_font.render("嘴", True, (0, 0, 0))
@@ -296,10 +297,10 @@ class Game():
         pygame.mixer.music.set_volume(self.volume * 0.4 / 100)
         for i in self.sound.keys():
             self.sound[i].set_volume(
-                    self.sound_volume
-                    * self.sound_default[i]
-                    / 100
-                    )
+                self.sound_volume
+                * self.sound_default[i]
+                / 100
+            )
 
         # 游戏分数
         self.score = 0
@@ -322,67 +323,67 @@ class Game():
         self.setting = False
         self.mouse_down = False
         self.R1_set = setting.Setting_line(
-                self.screen,
-                rect=(64, 199),
-                lenth=40,
-                point=0.5,
-                color=(255, 0, 0),
-                height=3
-                )
+            self.screen,
+            rect=(64, 199),
+            lenth=40,
+            point=0.5,
+            color=(255, 0, 0),
+            height=3
+        )
         self.G1_set = setting.Setting_line(
-                self.screen,
-                rect=(125, 199),
-                lenth=40,
-                point=0.5,
-                color=(0, 255, 0),
-                height=3
-                )
+            self.screen,
+            rect=(125, 199),
+            lenth=40,
+            point=0.5,
+            color=(0, 255, 0),
+            height=3
+        )
         self.B1_set = setting.Setting_line(
-                self.screen,
-                rect=(189, 199),
-                lenth=40,
-                point=0.5,
-                color=(0, 0, 255),
-                height=3
-                )
+            self.screen,
+            rect=(189, 199),
+            lenth=40,
+            point=0.5,
+            color=(0, 0, 255),
+            height=3
+        )
         self.R2_set = setting.Setting_line(
-                self.screen,
-                rect=(64, 249),
-                lenth=40,
-                point=0.5,
-                color=(255, 0, 0),
-                height=3
-                )
+            self.screen,
+            rect=(64, 249),
+            lenth=40,
+            point=0.5,
+            color=(255, 0, 0),
+            height=3
+        )
         self.G2_set = setting.Setting_line(
-                self.screen,
-                rect=(125, 249),
-                lenth=40,
-                point=0.5,
-                color=(0, 255, 0),
-                height=3
-                )
+            self.screen,
+            rect=(125, 249),
+            lenth=40,
+            point=0.5,
+            color=(0, 255, 0),
+            height=3
+        )
         self.B2_set = setting.Setting_line(
-                self.screen,
-                rect=(189, 249),
-                lenth=40,
-                point=0.5,
-                color=(0, 0, 255),
-                height=3
-                )
+            self.screen,
+            rect=(189, 249),
+            lenth=40,
+            point=0.5,
+            color=(0, 0, 255),
+            height=3
+        )
         self.volume_set = setting.Setting_line(
-                self.screen,
-                rect=(105, 358),
-                lenth=110,
-                point=self.volume / 100,
-                color=(230, 100, 0)
-                )
+            self.screen,
+            rect=(105, 358),
+            lenth=110,
+            point=self.volume / 100,
+            color=(230, 100, 0)
+        )
         self.sound_set = setting.Setting_line(
-                self.screen,
-                rect=(105, 408),
-                lenth=110,
-                point=self.sound_volume/100,
-                color=(230, 100, 0)
-                )
+            self.screen,
+            rect=(105, 408),
+            lenth=110,
+            point=self.sound_volume/100,
+            color=(230, 100, 0)
+        )
 
         # 游戏画面
         self.bird = bird.Bird(self.bg_size, self.land.rect.top,
@@ -438,9 +439,9 @@ class Game():
 
             # if bird collided with upipe or lpipe
             uCollide = pixelCollision(
-                    playerRect, uPipeRect, pHitMask, uHitmask)
+                playerRect, uPipeRect, pHitMask, uHitmask)
             lCollide = pixelCollision(
-                    playerRect, lPipeRect, pHitMask, lHitmask)
+                playerRect, lPipeRect, pHitMask, lHitmask)
 
             if uCollide or lCollide:
                 return True
@@ -546,15 +547,15 @@ class Game():
                             self.volume = (pos[0]-105) * 100 / 110
                             self.volume_set.set_point(self.volume / 100)
                             pygame.mixer.music.set_volume(
-                                    self.volume * 0.4 / 100)
+                                self.volume * 0.4 / 100)
                         elif pygame.Rect(105, 402, 110, 15).collidepoint(pos):
                             self.sound_volume = (pos[0]-105) * 100 / 110
                             self.sound_set.set_point(self.sound_volume / 100)
                             for i in self.sound.keys():
                                 self.sound[i].set_volume(
-                                        self.sound_volume
-                                        * self.sound_default[i]
-                                        / 100)
+                                    self.sound_volume
+                                    * self.sound_default[i]
+                                    / 100)
 
                         # 移出区域视为设置结束
                         else:
@@ -601,11 +602,11 @@ class Game():
                                 self.start = True
                                 self.setting = False
                                 setting.write_json(
-                                        self.bird_color,
-                                        self.background_index,
-                                        self.volume,
-                                        self.sound_volume
-                                        )
+                                    self.bird_color,
+                                    self.background_index,
+                                    self.volume,
+                                    self.sound_volume
+                                )
 
                             # 小鸟设置
                             elif pygame.Rect(52, 105, 30, 30)\
@@ -693,16 +694,16 @@ class Game():
                                                          - 1) % 3
                                 if self.background_index != 2:
                                     self.background = self.background_list[
-                                            self.background_index
-                                            ]
+                                        self.background_index
+                                    ]
                             elif pygame.Rect(200, 292, 30, 30)\
                                     .collidepoint(pos):
                                 self.background_index = (self.background_index
                                                          + 1) % 3
                                 if self.background_index != 2:
                                     self.background = self.background_list[
-                                            self.background_index
-                                            ]
+                                        self.background_index
+                                    ]
 
                             # 音量设置
                             elif pygame.Rect(105, 352, 110, 15)\
@@ -711,7 +712,7 @@ class Game():
                                 self.volume = (pos[0]-105) * 100 / 110
                                 self.volume_set.set_point(self.volume / 100)
                                 pygame.mixer.music.set_volume(
-                                        self.volume * 0.4 / 100)
+                                    self.volume * 0.4 / 100)
                             elif pygame.Rect(105, 402, 110, 15)\
                                     .collidepoint(pos):
                                 self.mouse_down = True
@@ -720,9 +721,9 @@ class Game():
                                                          / 100)
                                 for i in self.sound.keys():
                                     self.sound[i].set_volume(
-                                            self.sound_volume
-                                            * self.sound_default[i]
-                                            / 100)
+                                        self.sound_volume
+                                        * self.sound_default[i]
+                                        / 100)
 
                         # 分享画面
                         elif self.share:
@@ -760,7 +761,7 @@ class Game():
                                 self.start = False
                             elif self.share_rect.collidepoint(pos):
                                 self.image_data = pygame.surfarray.array3d(
-                                        pygame.display.get_surface())
+                                    pygame.display.get_surface())
                                 self.share = True
                             elif self.menu_rect.collidepoint(pos):
                                 self.init_vars()
@@ -859,26 +860,26 @@ class Game():
                 for i in range(len(self.value)):
                     self.screen.blit(self.cups[i], self.cup_rects[i])
                     time_tran = time.strftime(
-                            "%Y/%m/%d %H:%M:%S",
-                            time.localtime(self.value[i][0])).split()
+                        "%Y/%m/%d %H:%M:%S",
+                        time.localtime(self.value[i][0])).split()
                     score_text = self.rank_font.render(
-                            str(self.value[i][1]), True, (0, 0, 0))
+                        str(self.value[i][1]), True, (0, 0, 0))
                     time_text1 = self.setting_font.render(
-                            time_tran[0], True, (0, 0, 0))
+                        time_tran[0], True, (0, 0, 0))
                     time_text2 = self.setting_font.render(
-                            time_tran[1], True, (0, 0, 0))
+                        time_tran[1], True, (0, 0, 0))
                     self.screen.blit(
-                            score_text,
-                            (self.cup_rects[i][0]+50, self.cup_rects[i][1]+10)
-                            )
+                        score_text,
+                        (self.cup_rects[i][0]+50, self.cup_rects[i][1]+10)
+                    )
                     self.screen.blit(
-                            time_text1,
-                            (self.cup_rects[i][0]+95, self.cup_rects[i][1]+5)
-                            )
+                        time_text1,
+                        (self.cup_rects[i][0]+95, self.cup_rects[i][1]+5)
+                    )
                     self.screen.blit(
-                            time_text2,
-                            (self.cup_rects[i][0]+105, self.cup_rects[i][1]+23)
-                            )
+                        time_text2,
+                        (self.cup_rects[i][0]+105, self.cup_rects[i][1]+23)
+                    )
 
                 self.screen.blit(self.back_image, self.back_rect)
 
@@ -940,7 +941,7 @@ class Game():
                     # 生成和删除pipe
                     if 0 < self.upperpipes[0].rect.left < 5:
                         new_upipe, new_dpipe = pipe.get_pipe(
-                                self.bg_size, self.land.rect.top)
+                            self.bg_size, self.land.rect.top)
                         self.upperpipes.append(new_upipe)
                         self.lowerpipes.append(new_dpipe)
                         self.pipe_group.add(new_upipe, new_dpipe)
@@ -1064,7 +1065,7 @@ class Game():
         # 生成和删除pipe
         if 0 < self.upperpipes[0].rect.left < 5:
             new_upipe, new_dpipe = pipe.get_pipe(
-                    self.bg_size, self.land.rect.top)
+                self.bg_size, self.land.rect.top)
             self.upperpipes.append(new_upipe)
             self.lowerpipes.append(new_dpipe)
             self.pipe_group.add(new_upipe, new_dpipe)

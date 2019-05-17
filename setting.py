@@ -20,17 +20,18 @@ class Customize_bird():
     """
     Using opencv to customize the color of the bird's body and mouth.
     """
+
     def __init__(self):
         # 读取红色小鸟图片
         self.images = [
-                cv.imread("images/birds/bird2_0.png", cv.IMREAD_UNCHANGED),
-                cv.imread("images/birds/bird2_1.png", cv.IMREAD_UNCHANGED),
-                cv.imread("images/birds/bird2_2.png", cv.IMREAD_UNCHANGED)
-                ]
+            cv.imread("images/birds/bird2_0.png", cv.IMREAD_UNCHANGED),
+            cv.imread("images/birds/bird2_1.png", cv.IMREAD_UNCHANGED),
+            cv.imread("images/birds/bird2_2.png", cv.IMREAD_UNCHANGED)
+        ]
         # 转换图片为hsv格式，方便提取mask
         hsv = list(map(
-                lambda x: cv.cvtColor(x, cv.COLOR_BGR2HSV),
-                self.images))
+            lambda x: cv.cvtColor(x, cv.COLOR_BGR2HSV),
+            self.images))
 
         # 提取身体部分mask
         lower_hsv_body = np.array([0, 43, 46])
@@ -39,7 +40,7 @@ class Customize_bird():
             cv.inRange(hsv[0], lowerb=lower_hsv_body, upperb=upper_hsv_body),
             cv.inRange(hsv[1], lowerb=lower_hsv_body, upperb=upper_hsv_body),
             cv.inRange(hsv[2], lowerb=lower_hsv_body, upperb=upper_hsv_body)
-            ]
+        ]
 
         # 提取嘴部mask
         lower_hsv_mouth = np.array([16, 43, 46])
@@ -48,7 +49,7 @@ class Customize_bird():
             cv.inRange(hsv[0], lowerb=lower_hsv_mouth, upperb=upper_hsv_mouth),
             cv.inRange(hsv[1], lowerb=lower_hsv_mouth, upperb=upper_hsv_mouth),
             cv.inRange(hsv[2], lowerb=lower_hsv_mouth, upperb=upper_hsv_mouth)
-            ]
+        ]
 
         # 提取其他部分mask
         mask = list(map(cv.bitwise_or, self.mask_body, self.mask_mouth))
@@ -56,10 +57,10 @@ class Customize_bird():
 
         # 抠除身体和嘴部
         self.res = list(map(
-                lambda i: cv.bitwise_and(self.images[i],
-                                         self.images[i],
-                                         mask=mask[i]),
-                [0, 1, 2]))
+            lambda i: cv.bitwise_and(self.images[i],
+                                     self.images[i],
+                                     mask=mask[i]),
+            [0, 1, 2]))
 
     def seperate(self, body_color, mouth_color):
         for i in range(3):
@@ -99,6 +100,7 @@ class Setting_line():
         display：显示到屏幕上
         set_point：设置点位置
     """
+
     def __init__(self, screen, rect, lenth, point, color, height=5):
         self.screen = screen
 

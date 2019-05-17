@@ -113,7 +113,7 @@ class Email():
         img = img.transpose(Image.ROTATE_270)
         self.img = img.transpose(Image.FLIP_LEFT_RIGHT)
         self.email_check = re.compile(
-                r"^[\w]+\.?[\w]+@([\w]+)((\.\w{2,3}){1,3})$")
+            r"^[\w]+\.?[\w]+@([\w]+)((\.\w{2,3}){1,3})$")
         logging.info("Show email window")
         self.show()
 
@@ -168,8 +168,8 @@ class Email():
                          borderwidth=3, font=('微软雅黑', 12))
         self.text.pack(padx=2, pady=5, side=LEFT, fill=BOTH, expand=True)
         self.text.insert(
-                1.0,
-                "我在玩Flappy Bird小游戏，取得了%s分的好成绩哟" % self.score)
+            1.0,
+            "我在玩Flappy Bird小游戏，取得了%s分的好成绩哟" % self.score)
         vbar_y = AutoShowScrollbar(frame2, orient=VERTICAL)
         vbar_y.pack(fill=Y, side=RIGHT, expand=False)
         vbar_y.config(command=self.text.yview)

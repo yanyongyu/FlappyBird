@@ -50,7 +50,7 @@ class DQN(object):
 
         gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.333)
         self.sess = tf.InteractiveSession(
-                config=tf.ConfigProto(gpu_options=gpu_options))
+            config=tf.ConfigProto(gpu_options=gpu_options))
 
         self.load_saved_network()
 
@@ -64,7 +64,7 @@ class DQN(object):
 
     def conv2d(self, x, W, stride=1):
         return tf.nn.conv2d(
-                x, W, strides=[1, stride, stride, 1], padding="SAME")
+            x, W, strides=[1, stride, stride, 1], padding="SAME")
 
     def max_pool_2x2(self, x):
         return tf.nn.max_pool(x, ksize=[1, 2, 2, 1],
@@ -84,12 +84,12 @@ class DQN(object):
 
     def update_state(self, state):
         state_next = cv.cvtColor(
-                cv.resize(state, (80, 80)), cv.COLOR_BGR2GRAY)
+            cv.resize(state, (80, 80)), cv.COLOR_BGR2GRAY)
         ret, state_next = cv.threshold(
-                state_next, 1, 255, cv.THRESH_BINARY)
+            state_next, 1, 255, cv.THRESH_BINARY)
         state_next = np.reshape(state_next, (80, 80, 1))
         state_next = np.append(
-                state_next, self.currentState[:, :, :3], axis=2)
+            state_next, self.currentState[:, :, :3], axis=2)
         return state_next
 
     def load_saved_network(self):
@@ -107,7 +107,7 @@ class DQN(object):
 
     def getAction(self):
         self.readout = self.net_readout.eval(
-                feed_dict={self.net_input: [self.currentState]})[0]
+            feed_dict={self.net_input: [self.currentState]})[0]
         action = np.zeros(ACTIONS)
         action_index = 0
         if self.timeStep % FRAME_PER_ACTION == 0:
@@ -187,7 +187,7 @@ class DQN(object):
 
         # readout_action -- reward of selected action by a.
         self.q_eval = tf.reduce_sum(
-                tf.multiply(self.net_readout, self.action_input), axis=1)
+            tf.multiply(self.net_readout, self.action_input), axis=1)
         self.cost = tf.reduce_mean(tf.square(self.q_target - self.q_eval))
         tf.summary.scalar('loss', self.cost)
         self.train_step = tf.train.AdamOptimizer(1e-6).minimize(self.cost)
@@ -204,7 +204,7 @@ class DQN(object):
         # Step2: calculate q_target
         q_target = []
         selected_q_next = self.net_readout.eval(
-                feed_dict={self.net_input: next_state_batch})
+            feed_dict={self.net_input: next_state_batch})
 
         for i in range(BATCH):
             terminal = minibatch[i][4]
@@ -214,12 +214,12 @@ class DQN(object):
                 q_target.append(reward_batch[i] + GAMMA * selected_q_next[i])
 
         _, result = self.sess.run(
-                [self.train_step, self.merged],
-                feed_dict={
-                        self.q_target: q_target,
-                        self.action_input: action_batch,
-                        self.eval_net_input: state_batch
-                })
+            [self.train_step, self.merged],
+            feed_dict={
+                self.q_target: q_target,
+                self.action_input: action_batch,
+                self.eval_net_input: state_batch
+            })
         if (self.timeStep + 1) % 1000 == 0:
             self.writer.add_summary(result, global_step=self.timeStep + 1)
 
@@ -234,7 +234,7 @@ class DQN(object):
             state_next = self.update_state(state_next)
 
             self.replayMemory.append(
-                    (self.currentState, action, reward, state_next, terminal))
+                (self.currentState, action, reward, state_next, terminal))
             if len(self.replayMemory) > REPLAY_MEMORY:
                 self.replayMemory.popleft()
 

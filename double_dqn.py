@@ -50,7 +50,7 @@ class DoubleDQN(object):
 
         gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.333)
         self.sess = tf.InteractiveSession(
-                config=tf.ConfigProto(gpu_options=gpu_options))
+            config=tf.ConfigProto(gpu_options=gpu_options))
 
         self.load_saved_network()
 
@@ -64,7 +64,7 @@ class DoubleDQN(object):
 
     def conv2d(self, x, W, stride=1):
         return tf.nn.conv2d(
-                x, W, strides=[1, stride, stride, 1], padding="SAME")
+            x, W, strides=[1, stride, stride, 1], padding="SAME")
 
     def max_pool_2x2(self, x):
         return tf.nn.max_pool(x, ksize=[1, 2, 2, 1],
@@ -84,12 +84,12 @@ class DoubleDQN(object):
 
     def update_state(self, state):
         state_next = cv.cvtColor(
-                cv.resize(state, (80, 80)), cv.COLOR_BGR2GRAY)
+            cv.resize(state, (80, 80)), cv.COLOR_BGR2GRAY)
         ret, state_next = cv.threshold(
-                state_next, 1, 255, cv.THRESH_BINARY)
+            state_next, 1, 255, cv.THRESH_BINARY)
         state_next = np.reshape(state_next, (80, 80, 1))
         state_next = np.append(
-                state_next, self.currentState[:, :, :3], axis=2)
+            state_next, self.currentState[:, :, :3], axis=2)
         return state_next
 
     def load_saved_network(self):
@@ -107,7 +107,7 @@ class DoubleDQN(object):
 
     def getAction(self):
         self.readout = self.readout_e.eval(
-                feed_dict={self.eval_net_input: [self.currentState]})[0]
+            feed_dict={self.eval_net_input: [self.currentState]})[0]
         action = np.zeros(ACTIONS)
         action_index = 0
         if self.timeStep % FRAME_PER_ACTION == 0:
@@ -173,7 +173,7 @@ class DoubleDQN(object):
             b_conv1_t = self.bias_variable([32], trainable=False)
             # Output Shape: [None, 20, 20, 32]
             h_conv1_t = self.conv2d(
-                    self.target_net_input, W_conv1_t, stride=4)
+                self.target_net_input, W_conv1_t, stride=4)
             h_relu1_t = tf.nn.relu(h_conv1_t + b_conv1_t)
             # Output Shape: [None, 10, 10, 32]
             h_pool1_t = self.max_pool_2x2(h_relu1_t)
@@ -206,20 +206,20 @@ class DoubleDQN(object):
 
             # parameter transfer
             t_params = tf.get_collection(
-                    tf.GraphKeys.GLOBAL_VARIABLES, scope='target_net')
+                tf.GraphKeys.GLOBAL_VARIABLES, scope='target_net')
             e_params = tf.get_collection(
-                    tf.GraphKeys.GLOBAL_VARIABLES, scope='eval_net')
+                tf.GraphKeys.GLOBAL_VARIABLES, scope='eval_net')
 
             with tf.variable_scope('soft_replacement'):
                 self.target_replace_op = [
-                        tf.assign(t, e) for t, e in zip(t_params, e_params)]
+                    tf.assign(t, e) for t, e in zip(t_params, e_params)]
 
             # build train network
             self.action_input = tf.placeholder("float", [None, ACTIONS])
             self.q_target = tf.placeholder("float", [None])
 
             self.q_eval = tf.reduce_sum(
-                    tf.multiply(self.readout_e, self.action_input), axis=1)
+                tf.multiply(self.readout_e, self.action_input), axis=1)
             # readout_action -- reward of selected action by a.
             self.cost = tf.reduce_mean(tf.square(self.q_target - self.q_eval))
             tf.summary.scalar('loss', self.cost)
@@ -239,9 +239,9 @@ class DoubleDQN(object):
         # Step2: calculate q_target
         q_target = []
         readout_j1_batch = self.readout_t.eval(
-                feed_dict={self.target_net_input: next_state_batch})
+            feed_dict={self.target_net_input: next_state_batch})
         readout_j1_batch_for_action = self.readout_e.eval(
-                feed_dict={self.eval_net_input: next_state_batch})
+            feed_dict={self.eval_net_input: next_state_batch})
         max_act4next = np.argmax(readout_j1_batch_for_action, axis=1)
         selected_q_next = \
             readout_j1_batch[range(len(max_act4next)), max_act4next]
@@ -254,12 +254,12 @@ class DoubleDQN(object):
                 q_target.append(reward_batch[i] + GAMMA * selected_q_next[i])
 
         _, result = self.sess.run(
-                [self.train_step, self.merged],
-                feed_dict={
-                        self.q_target: q_target,
-                        self.action_input: action_batch,
-                        self.eval_net_input: state_batch
-                })
+            [self.train_step, self.merged],
+            feed_dict={
+                self.q_target: q_target,
+                self.action_input: action_batch,
+                self.eval_net_input: state_batch
+            })
         if (self.timeStep + 1) % 1000 == 0:
             self.writer.add_summary(result, global_step=self.timeStep + 1)
 
@@ -274,7 +274,7 @@ class DoubleDQN(object):
             state_next = self.update_state(state_next)
 
             self.replayMemory.append(
-                    (self.currentState, action, reward, state_next, terminal))
+                (self.currentState, action, reward, state_next, terminal))
             if len(self.replayMemory) > REPLAY_MEMORY:
                 self.replayMemory.popleft()
 

@@ -86,7 +86,7 @@ class Sql():
             conn = sqlite3.connect("record.db")
             cursor = conn.cursor()
             cursor.execute(
-                    "create table record (time int primary key, score int)")
+                "create table record (time int primary key, score int)")
             cursor.close()
             conn.commit()
             conn.close()
@@ -117,8 +117,8 @@ class Sql():
         value = cls.get_score()
         if len(value) < 3:
             cursor.execute(
-                    "insert into record (time, score) values (%s, %s)"
-                    % (timestamp, score))
+                "insert into record (time, score) values (%s, %s)"
+                % (timestamp, score))
         else:
             if score >= value[2][1]:
                 cursor.execute(

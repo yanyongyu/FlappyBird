@@ -16,16 +16,16 @@ import pygame
 from utils import getHitmask
 
 image = (
-        [pygame.image.load("images/birds/bird0_0.png"),
-         pygame.image.load("images/birds/bird0_1.png"),
-         pygame.image.load("images/birds/bird0_2.png")],
-        [pygame.image.load("images/birds/bird1_0.png"),
-         pygame.image.load("images/birds/bird1_1.png"),
-         pygame.image.load("images/birds/bird1_2.png")],
-        [pygame.image.load("images/birds/bird2_0.png"),
-         pygame.image.load("images/birds/bird2_1.png"),
-         pygame.image.load("images/birds/bird2_2.png")]
-    )
+    [pygame.image.load("images/birds/bird0_0.png"),
+     pygame.image.load("images/birds/bird0_1.png"),
+     pygame.image.load("images/birds/bird0_2.png")],
+    [pygame.image.load("images/birds/bird1_0.png"),
+     pygame.image.load("images/birds/bird1_1.png"),
+     pygame.image.load("images/birds/bird1_2.png")],
+    [pygame.image.load("images/birds/bird2_0.png"),
+     pygame.image.load("images/birds/bird2_1.png"),
+     pygame.image.load("images/birds/bird2_2.png")]
+)
 
 
 class Bird(pygame.sprite.Sprite):
@@ -40,13 +40,13 @@ class Bird(pygame.sprite.Sprite):
         elif color == 4:
             try:
                 self.images = [
-                        pygame.image.load("images/birds/custom_0.png")
-                        .convert_alpha(),
-                        pygame.image.load("images/birds/custom_1.png")
-                        .convert_alpha(),
-                        pygame.image.load("images/birds/custom_2.png")
-                        .convert_alpha()
-                        ]
+                    pygame.image.load("images/birds/custom_0.png")
+                    .convert_alpha(),
+                    pygame.image.load("images/birds/custom_1.png")
+                    .convert_alpha(),
+                    pygame.image.load("images/birds/custom_2.png")
+                    .convert_alpha()
+                ]
             except Exception:
                 self.images = list(map(lambda x: x.convert_alpha(),
                                        image[random.choice([0, 1, 2])]))
@@ -107,9 +107,9 @@ class Bird(pygame.sprite.Sprite):
             if self.rotate >= -90:
                 self.rotate -= self.angular_speed
                 self.image = pygame.transform.rotate(
-                        self.images[self.image_index(delay)],
-                        self.rotate
-                        )
+                    self.images[self.image_index(delay)],
+                    self.rotate
+                )
                 self.mask = getHitmask(self.image)
                 self.center = self.rect.centerx, self.rect.centery
                 self.rect = self.image.get_rect()

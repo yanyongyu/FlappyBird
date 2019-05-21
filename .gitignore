@@ -3,7 +3,7 @@ __pycache__
 **/__pycache__
 
 # custom bird picture
-/images/birds/custom*
+/src/assets/images/birds/custom*
 
 # game record and settings
 *.db

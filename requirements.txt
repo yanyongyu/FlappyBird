@@ -58,7 +58,7 @@ ipython_genutils=0.2.0=py37_0
 ipywidgets=7.4.2=py37_0
 isort=4.3.16=py37_0
 jedi=0.13.3=py37_0
-jinja2=2.10=py37_0
+jinja2=2.10.1=py37_0
 jpeg=9b=hb83a4c4_2
 jsonschema=3.0.1=py37_0
 jupyter=1.0.0=py37_7
@@ -166,7 +166,7 @@ pywavelets=1.0.1=py36h8c2d366_0
 pywin32=223=py37hfa6e2cd_1
 pywin32-ctypes=0.2.0=pypi_0
 pywinpty=0.5.5=py37_1000
-pyyaml=3.13=pypi_0
+pyyaml=5.1=py37he774522_0
 pyzmq=18.0.1=pypi_0
 qt=5.9.7=vc14h73c81de_0
 qtawesome=0.5.7=py37_1
@@ -205,7 +205,7 @@ tornado=6.0.2=py37he774522_0
 traitlets=4.3.2=py37_0
 twisted=18.9.0=py36he774522_0
 typed-ast=1.1.0=pypi_0
-urllib3=1.24.1=py37_0
+urllib3=1.24.2=py37_0
 vc=14.1=h0510ff6_4
 vs2015_runtime=14.15.26706=h3a45250_0
 wcwidth=0.1.7=py37_0

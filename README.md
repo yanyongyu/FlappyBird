@@ -3,7 +3,8 @@
 ## <span id="overview">Overview</span>
 * [Installation Dependencies](#dependencies)
 * [Game](#game)
-* [Reinforcement Learning](#rl)(强化学习)
+* [RL DQN](#rl)(强化学习)
+* [Improve](#improve)
 
 ## <span id="dependencies">[Installation Dependencies](#overview)</span>
 * python ~= 3.7
@@ -14,6 +15,11 @@
 * sqlite ~= 3.27.2
 * pillow ~= 6.0.0
 * pywin32 ~= 223
+
+  if you are using conda, you may use the following code to create a new environment:
+  ```bash
+  conda install --yes --file requirements.txt
+  ```
 
 ## <span id="game">[Game](#overview)</span>
 
@@ -29,18 +35,23 @@ using <font color=#ee77ff>escape</font>/<font color=#00ff7f>key-p</font> or clic
 
 ### shortcuts
 * <font size=4>homepage</font>
+
   <img src="./img/homepage.gif" width="250">
-  <br>
+
 * <font size=4>setting</font>
+
   <img src="./img/setting.gif" width="250">
-  <br>
+
 * <font size=4>rank</font>
+
   <img src="./img/rank.gif" width="250">
-  <br>
+
 * <font size=4>game</font>
+
   <img src="./img/game.gif" width="250">
-  <br>
+
 * <font size=4>share</font>
+
   <img src="./img/share.png" width="250">
 
 ## <span id="rl">[Deep Q Network](#overview)</span>
@@ -62,3 +73,22 @@ Since deep Q-network is trained on the raw pixel values observed from the game s
 ```bash
 python dqn.py
 ```
+
+Model will be saved in ./dqn_model/
+
+Log file will be saved in ./dqn_logs/
+
+Use following code to see the graph and loss:
+
+```bash
+tensorboard --logdir dqn_logs
+```
+
+### Result
+After about 300w step, the bird has a good performance.The score can easily reach 100.
+
+## <span id="improve">Improve</span>
+
+It's enough? No!
+
+### Double DQN

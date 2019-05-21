@@ -1,18 +1,35 @@
+# python cache file
 __pycache__
 **/__pycache__
 
+# custom bird picture
 /images/birds/custom*
 
-*.exe
-*.spec
+# game record and settings
 *.db
 *.json
 
-/*logs/*
-
+# pyinstaller files
+*.exe
+*.spec
 /dist/*
 /build/*
 /release/*
-!.gitignore
-!.gitkeep
+
+# tensorboard log files
+**/*logs/*
+
+# tensorflow model files
+/src/dqn_model/*
+
+# IDE project file
 .spyproject
+.vscode
+
+# speech files
+*.ppt
+*.pptx
+*.doc
+*.docx
+
+!.gitkeep

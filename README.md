@@ -16,7 +16,12 @@
 * pillow ~= 6.0.0
 * pywin32 ~= 223
 
-  if you are using conda, you may use the following code to create a new environment:
+  You can use the following code to install my environment by pip:
+  ```bash
+  pip install -r requirements.txt
+  ```
+
+  If you are using conda, you may use the following code to create a new environment:
   ```bash
   conda install --yes --file requirements.txt
   ```
@@ -62,6 +67,7 @@ It is a convolutional neural network, trained with a variant of Q-learning, whos
 ### Experiments
 
 #### Environment
+
 Since deep Q-network is trained on the raw pixel values observed from the game screen at each time step, Kevin Chen finds that remove the background appeared in the original game can make it converge faster. This process can be visualized as the following figure:
 
 <img src="./img/preprocess.png" width="450">
@@ -70,6 +76,7 @@ Since deep Q-network is trained on the raw pixel values observed from the game s
 <img src="./img/network.png">
 
 ### How to Train?
+
 ```bash
 python dqn.py
 ```
@@ -84,7 +91,18 @@ Use following code to see the graph and loss:
 tensorboard --logdir dqn_logs
 ```
 
+### Process
+
+#### 0 Step
+
+<img src="./img/train_0.gif" width="250">
+
+#### 300w Step
+
+<img src="./img/train_300w.png" width="250">
+
 ### Result
+
 After about 300w step, the bird has a good performance.The score can easily reach 100.
 
 ## <span id="improve">Improve</span>
@@ -92,3 +110,12 @@ After about 300w step, the bird has a good performance.The score can easily reac
 It's enough? No!
 
 ### Double DQN
+
+Change the network into two parts: target_net and eval_net.
+
+* use eval network to select what is the best action to take for the next state (the action with the highest Q value).
+* use target network to calculate the target Q value of taking that action at the next state.
+
+The model can converge much faster. At about 175w step, the score has a dramatic growth.
+
+<img src="./img/ddqn.gif" width="250">

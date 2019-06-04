@@ -64,6 +64,8 @@ using <font color=#ee77ff>escape</font>/<font color=#00ff7f>key-p</font> or clic
 ### What is Deep Q Network?
 It is a convolutional neural network, trained with a variant of Q-learning, whose input is raw pixels and whose output is a value function estimating future rewards.
 
+<img src="./img/state.png">
+
 ### Experiments
 
 #### Environment

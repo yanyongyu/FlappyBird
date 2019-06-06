@@ -31,6 +31,7 @@ __pycache__
 *.pptx
 *.doc
 *.docx
+*.pdf
 *.xmind
 
 !.gitkeep

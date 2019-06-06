@@ -8,6 +8,7 @@ __author__ = "yanyongyu"
 __all__ = ["copy", "save", "send_email"]
 
 import re
+import os
 import sys
 import time
 import logging
@@ -126,7 +127,13 @@ class Email():
         y = (sh - 250) / 2 - 25
         self.root.geometry('%dx%d+%d+%d' % (400, 250, x, y))
         self.root.resizable(False, False)
-        self.root.iconbitmap("assets/images/flappy.ico")
+        icon_path = os.path.join(
+            os.path.abspath("."),
+            "assets/images/flappy.ico"
+        )
+        print(icon_path)
+        print(os.path.exists(icon_path))
+        self.root.iconbitmap(icon_path)
 
         # 邮件信息框架
         frame1 = Frame(self.root)

@@ -14,7 +14,7 @@
 * numpy ~= 1.14.5
 * sqlite ~= 3.27.2
 * pillow ~= 6.0.0
-* pywin32 ~= 223
+* pywin32 ~= 223 [Optional]
 
   You can use the following code to install my environment by pip:
   ```bash

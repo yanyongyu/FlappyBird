@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 This is the score/sql module of the game.
-Author: yanyongyu
+@Author: yanyongyu
 """
-
 __author__ = "yanyongyu"
 __all__ = ["display", "show_score", "show_best", "Sql"]
 
@@ -15,28 +14,32 @@ import sqlite3
 import pygame
 
 # 游戏中成绩数字
-display_images = [pygame.image.load("assets/images/game/font0.png"),
-                  pygame.image.load("assets/images/game/font1.png"),
-                  pygame.image.load("assets/images/game/font2.png"),
-                  pygame.image.load("assets/images/game/font3.png"),
-                  pygame.image.load("assets/images/game/font4.png"),
-                  pygame.image.load("assets/images/game/font5.png"),
-                  pygame.image.load("assets/images/game/font6.png"),
-                  pygame.image.load("assets/images/game/font7.png"),
-                  pygame.image.load("assets/images/game/font8.png"),
-                  pygame.image.load("assets/images/game/font9.png")]
+display_images = [
+    pygame.image.load("assets/images/game/font0.png"),
+    pygame.image.load("assets/images/game/font1.png"),
+    pygame.image.load("assets/images/game/font2.png"),
+    pygame.image.load("assets/images/game/font3.png"),
+    pygame.image.load("assets/images/game/font4.png"),
+    pygame.image.load("assets/images/game/font5.png"),
+    pygame.image.load("assets/images/game/font6.png"),
+    pygame.image.load("assets/images/game/font7.png"),
+    pygame.image.load("assets/images/game/font8.png"),
+    pygame.image.load("assets/images/game/font9.png")
+]
 
 # 结算面板成绩数字
-score_images = [pygame.image.load("assets/images/end/score0.png"),
-                pygame.image.load("assets/images/end/score1.png"),
-                pygame.image.load("assets/images/end/score2.png"),
-                pygame.image.load("assets/images/end/score3.png"),
-                pygame.image.load("assets/images/end/score4.png"),
-                pygame.image.load("assets/images/end/score5.png"),
-                pygame.image.load("assets/images/end/score6.png"),
-                pygame.image.load("assets/images/end/score7.png"),
-                pygame.image.load("assets/images/end/score8.png"),
-                pygame.image.load("assets/images/end/score9.png")]
+score_images = [
+    pygame.image.load("assets/images/end/score0.png"),
+    pygame.image.load("assets/images/end/score1.png"),
+    pygame.image.load("assets/images/end/score2.png"),
+    pygame.image.load("assets/images/end/score3.png"),
+    pygame.image.load("assets/images/end/score4.png"),
+    pygame.image.load("assets/images/end/score5.png"),
+    pygame.image.load("assets/images/end/score6.png"),
+    pygame.image.load("assets/images/end/score7.png"),
+    pygame.image.load("assets/images/end/score8.png"),
+    pygame.image.load("assets/images/end/score9.png")
+]
 
 
 def display(screen, bg_size, score):
@@ -50,7 +53,7 @@ def display(screen, bg_size, score):
     x = (bg_size[0] - total_width) // 2
 
     for digit in digits:
-        screen.blit(display_images[digit], (x, bg_size[1]*0.1))
+        screen.blit(display_images[digit], (x, bg_size[1] * 0.1))
         x += display_images[digit].get_width()
 
 
@@ -116,14 +119,13 @@ class Sql():
         timestamp = round(time.time())
         value = cls.get_score()
         if len(value) < 3:
-            cursor.execute(
-                "insert into record (time, score) values (%s, %s)"
-                % (timestamp, score))
+            cursor.execute("insert into record (time, score) values (%s, %s)" %
+                           (timestamp, score))
         else:
             if score >= value[2][1]:
                 cursor.execute(
-                    "update `record` set `time`=%s,`score`=%s where `time`=%s"
-                    % (timestamp, score, value[2][0]))
+                    "update `record` set `time`=%s,`score`=%s where `time`=%s" %
+                    (timestamp, score, value[2][0]))
         cls.__close(cursor, conn, commit=True)
 
         # 是否是新纪录

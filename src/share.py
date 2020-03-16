@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 This is the share module of the game.
-Author: yanyongyu
+@Author: yanyongyu
 """
-
 __author__ = "yanyongyu"
 __all__ = ["copy", "save", "send_email"]
 
@@ -94,19 +93,25 @@ class AutoShowScrollbar(Scrollbar):
 class Email():
     """Make a email share to others."""
     html_text = (
-        '<html><body><h1>%s</h1>' +
-        '<h2>游戏源码地址：' +
+        '<html><body><h1>%s</h1>' + '<h2>游戏源码地址：' +
         '<a href="https://github.com/yanyongyu/FlappyBird">GitHub</a></h2>' +
         '<a><img src="cid:flappy" alt="flappy"></a>' +
         '<p>Coding Email...</p>' +
         '<p>send by <a href="http://www.python.org">Python</a> app...</p>' +
         '</body></html>')
 
-    smtp_servers = {'126': 'smtp.126.com', 'qq': 'smtp.qq.com',
-                    'sina': 'smtp.sina.com.cn', 'aliyun': 'smtp.aliyun.com',
-                    '163': 'smtp.163.com', 'yahoo': 'smtp.mail.yahoo.com',
-                    'foxmail': 'SMTP.foxmail.com', 'sohu': 'smtp.sohu.com',
-                    '139': 'SMTP.139.com', 'china': 'smtp.china.com'}
+    smtp_servers = {
+        '126': 'smtp.126.com',
+        'qq': 'smtp.qq.com',
+        'sina': 'smtp.sina.com.cn',
+        'aliyun': 'smtp.aliyun.com',
+        '163': 'smtp.163.com',
+        'yahoo': 'smtp.mail.yahoo.com',
+        'foxmail': 'SMTP.foxmail.com',
+        'sohu': 'smtp.sohu.com',
+        '139': 'SMTP.139.com',
+        'china': 'smtp.china.com'
+    }
 
     def __init__(self, image, score):
         self.score = score
@@ -127,12 +132,8 @@ class Email():
         y = (sh - 250) / 2 - 25
         self.root.geometry('%dx%d+%d+%d' % (400, 250, x, y))
         self.root.resizable(False, False)
-        icon_path = os.path.join(
-            os.path.abspath("."),
-            "assets/images/flappy.ico"
-        )
-        print(icon_path)
-        print(os.path.exists(icon_path))
+        icon_path = os.path.join(os.path.abspath("."),
+                                 "assets/images/flappy.ico")
         self.root.iconbitmap(icon_path)
 
         # 邮件信息框架
@@ -143,40 +144,41 @@ class Email():
 
         # 发件人邮箱输入行
         label1 = Label(frame1, text="发件人邮箱：")
-        label1.grid(row=0, column=0, padx=2, pady=4, sticky=W+N+S)
+        label1.grid(row=0, column=0, padx=2, pady=4, sticky=W + N + S)
         self.send_email = StringVar()
         entry1 = Entry(frame1, textvariable=self.send_email)
-        entry1.grid(row=0, column=1, padx=2, pady=4, sticky=E+N+S+W)
+        entry1.grid(row=0, column=1, padx=2, pady=4, sticky=E + N + S + W)
 
         # 发件人邮箱密码输入行
         label2 = Label(frame1, text="发件人密码：")
-        label2.grid(row=1, column=0, padx=2, pady=4, sticky=W+N+S)
+        label2.grid(row=1, column=0, padx=2, pady=4, sticky=W + N + S)
         self.send_pw = StringVar()
         self.entry2 = Entry(frame1, textvariable=self.send_pw, show='*')
-        self.entry2.grid(row=1, column=1, padx=2, pady=4, sticky=E+N+S+W)
+        self.entry2.grid(row=1, column=1, padx=2, pady=4, sticky=E + N + S + W)
         self.v = IntVar()
         cb = Checkbutton(frame1, text='显示密码', variable=self.v)
-        cb.grid(row=1, column=2, padx=2, pady=4, sticky=E+N+S)
+        cb.grid(row=1, column=2, padx=2, pady=4, sticky=E + N + S)
         cb.bind('<ButtonRelease-1>', self.check_show)
 
         # 收件人邮箱输入行
         label3 = Label(frame1, text="收件人邮箱：")
-        label3.grid(row=2, column=0, padx=2, pady=4, sticky=W+N+S)
+        label3.grid(row=2, column=0, padx=2, pady=4, sticky=W + N + S)
         self.target_email = StringVar()
         entry3 = Entry(frame1, textvariable=self.target_email)
-        entry3.grid(row=2, column=1, padx=2, pady=4, sticky=E+N+S+W)
+        entry3.grid(row=2, column=1, padx=2, pady=4, sticky=E + N + S + W)
 
         # 邮件内容输入框架
         frame2 = Frame(self.root)
         frame2.pack(fill=BOTH, expand=True)
 
         # 邮件内容输入
-        self.text = Text(frame2, width=40, height=5,
-                         borderwidth=3, font=('微软雅黑', 12))
+        self.text = Text(frame2,
+                         width=40,
+                         height=5,
+                         borderwidth=3,
+                         font=('微软雅黑', 12))
         self.text.pack(padx=2, pady=5, side=LEFT, fill=BOTH, expand=True)
-        self.text.insert(
-            1.0,
-            "我在玩Flappy Bird小游戏，取得了%s分的好成绩哟" % self.score)
+        self.text.insert(1.0, "我在玩Flappy Bird小游戏，取得了%s分的好成绩哟" % self.score)
         vbar_y = AutoShowScrollbar(frame2, orient=VERTICAL)
         vbar_y.pack(fill=Y, side=RIGHT, expand=False)
         vbar_y.config(command=self.text.yview)
@@ -185,10 +187,12 @@ class Email():
         # 界面鼠标滚动
         def _scroll_text(event):
             self.text.yview_scroll(int(-event.delta / 120), 'units')
+
         self.text.bind('<MouseWheel>', _scroll_text)
 
         # 点击发送按钮
-        button = Button(self.root, text="点击发送",
+        button = Button(self.root,
+                        text="点击发送",
                         command=lambda: start_thread(self.send))
         button.pack(pady=4, side=BOTTOM)
 
@@ -217,8 +221,8 @@ class Email():
         to_addr = self.target_email.get()
         logging.info("From email address: %s" % from_addr)
         logging.info("To email address: %s" % to_addr)
-        if (not self.email_check.match(from_addr)
-                or not self.email_check.match(to_addr)):
+        if (not self.email_check.match(from_addr) or
+                not self.email_check.match(to_addr)):
             messagebox.showerror("Flappy Bird", "请检查邮箱格式！")
             return
         group = self.email_check.match(from_addr).groups()
@@ -231,8 +235,9 @@ class Email():
             return
 
         msg = MIMEMultipart()
-        msg.attach(MIMEText(Email.html_text % self.text.get(1.0, END),
-                            'html', 'utf-8'))
+        msg.attach(
+            MIMEText(Email.html_text % self.text.get(1.0, END), 'html',
+                     'utf-8'))
         msg['From'] = self._format_addr('Python爱好者 <%s>' % from_addr)
         msg['To'] = self._format_addr('管理员 <%s>' % to_addr)
         msg['Subject'] = Header('Flappy Bird', 'utf-8').encode()
@@ -244,7 +249,8 @@ class Email():
         mime = MIMEImage(output.getvalue(), _subtype="JPEG")
         output.close()
         mime.add_header('Content-ID', 'flappy')
-        mime.add_header('Content-Disposition', 'attachment',
+        mime.add_header('Content-Disposition',
+                        'attachment',
                         filename='%s.jpg' % round(time.time()))
         # 添加到MIMEMultipart:
         msg.attach(mime)
@@ -252,7 +258,7 @@ class Email():
         try:
             logging.info("Send email")
             server = smtplib.SMTP(smtp_server, 25)
-#            server.set_debuglevel(1)
+            #            server.set_debuglevel(1)
             server.login(from_addr, password)
             server.sendmail(from_addr, [to_addr], msg.as_string())
             server.quit()

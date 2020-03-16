@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri May 10 21:39:38 2019
-@author: yanyongyu
+Utils of the game.
+@Author: yanyongyu
 """
 __author__ = "yanyongyu"
 
@@ -27,6 +27,6 @@ def pixelCollision(rect1, rect2, hitmask1, hitmask2):
 
     for x in range(rect.width):
         for y in range(rect.height):
-            if hitmask1[x1+x][y1+y] and hitmask2[x2+x][y2+y]:
+            if hitmask1[x1 + x][y1 + y] and hitmask2[x2 + x][y2 + y]:
                 return True
     return False

@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 This is the bird object of the game.
-Author: yan
+@Author: yanyongyu
 """
-
 __author__ = "yanyongyu"
 __all__ = ["Bird"]
 
@@ -15,41 +14,46 @@ import pygame
 
 from utils import getHitmask
 
-image = (
-    [pygame.image.load("assets/images/birds/bird0_0.png"),
-     pygame.image.load("assets/images/birds/bird0_1.png"),
-     pygame.image.load("assets/images/birds/bird0_2.png")],
-    [pygame.image.load("assets/images/birds/bird1_0.png"),
-     pygame.image.load("assets/images/birds/bird1_1.png"),
-     pygame.image.load("assets/images/birds/bird1_2.png")],
-    [pygame.image.load("assets/images/birds/bird2_0.png"),
-     pygame.image.load("assets/images/birds/bird2_1.png"),
-     pygame.image.load("assets/images/birds/bird2_2.png")]
-)
+image = ([
+    pygame.image.load("assets/images/birds/bird0_0.png"),
+    pygame.image.load("assets/images/birds/bird0_1.png"),
+    pygame.image.load("assets/images/birds/bird0_2.png")
+], [
+    pygame.image.load("assets/images/birds/bird1_0.png"),
+    pygame.image.load("assets/images/birds/bird1_1.png"),
+    pygame.image.load("assets/images/birds/bird1_2.png")
+], [
+    pygame.image.load("assets/images/birds/bird2_0.png"),
+    pygame.image.load("assets/images/birds/bird2_1.png"),
+    pygame.image.load("assets/images/birds/bird2_2.png")
+])
 
 
 class Bird(pygame.sprite.Sprite):
+
     def __init__(self, bg_size, landy, color, ai=False):
         pygame.sprite.Sprite.__init__(self)
 
         if 0 <= color <= 2:
             self.images = list(map(lambda x: x.convert_alpha(), image[color]))
         elif color == 3:
-            self.images = list(map(lambda x: x.convert_alpha(),
-                                   image[random.choice([0, 1, 2])]))
+            self.images = list(
+                map(lambda x: x.convert_alpha(), image[random.choice([0, 1,
+                                                                      2])]))
         elif color == 4:
             try:
                 self.images = [
-                    pygame.image.load("assets/images/birds/custom_0.png")
-                    .convert_alpha(),
-                    pygame.image.load("assets/images/birds/custom_1.png")
-                    .convert_alpha(),
-                    pygame.image.load("assets/images/birds/custom_2.png")
-                    .convert_alpha()
+                    pygame.image.load(
+                        "assets/images/birds/custom_0.png").convert_alpha(),
+                    pygame.image.load(
+                        "assets/images/birds/custom_1.png").convert_alpha(),
+                    pygame.image.load(
+                        "assets/images/birds/custom_2.png").convert_alpha()
                 ]
             except Exception:
-                self.images = list(map(lambda x: x.convert_alpha(),
-                                       image[random.choice([0, 1, 2])]))
+                self.images = list(
+                    map(lambda x: x.convert_alpha(),
+                        image[random.choice([0, 1, 2])]))
         self.image_index_cycle = cycle([0, 1, 2, 1])
         self.index = next(self.image_index_cycle)
         self.image = self.images[self.index]
@@ -107,18 +111,13 @@ class Bird(pygame.sprite.Sprite):
             if self.rotate >= -90:
                 self.rotate -= self.angular_speed
                 self.image = pygame.transform.rotate(
-                    self.images[self.image_index(delay)],
-                    self.rotate
-                )
+                    self.images[self.image_index(delay)], self.rotate)
                 self.mask = getHitmask(self.image)
                 self.center = self.rect.centerx, self.rect.centery
                 self.rect = self.image.get_rect()
                 self.rect.centerx, self.rect.centery = self.center
         if self.landy - self.rect.top - self.rect.height + 20 >= 0:
-            self.rect.top += min(self.speedy,
-                                 self.landy
-                                 - self.rect.top
-                                 - self.rect.height
-                                 + 20)
+            self.rect.top += min(
+                self.speedy, self.landy - self.rect.top - self.rect.height + 20)
         if self.speedy <= self.max_speedy:
             self.speedy += self.down_speedy_a

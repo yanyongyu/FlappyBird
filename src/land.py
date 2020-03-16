@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 This is the land object of the game.
-Author: yanyongyu
+@Author: yanyongyu
 """
-
 __author__ = "yanyongyu"
 __all__ = ["Land"]
 
@@ -14,6 +13,7 @@ from utils import getHitmask
 
 
 class Land(pygame.sprite.Sprite):
+
     def __init__(self, bg_size):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("assets/images/land.png").convert()

@@ -49,8 +49,8 @@ class DQN(object):
         self.create_network()
 
         gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.333)
-        self.sess = tf.InteractiveSession(
-            config=tf.ConfigProto(gpu_options=gpu_options))
+        self.sess = tf.InteractiveSession(config=tf.ConfigProto(
+            gpu_options=gpu_options))
 
         self.load_saved_network()
 
@@ -63,12 +63,16 @@ class DQN(object):
         return tf.Variable(initial, trainable=trainable)
 
     def conv2d(self, x, W, stride=1):
-        return tf.nn.conv2d(
-            x, W, strides=[1, stride, stride, 1], padding="SAME")
+        return tf.nn.conv2d(x,
+                            W,
+                            strides=[1, stride, stride, 1],
+                            padding="SAME")
 
     def max_pool_2x2(self, x):
-        return tf.nn.max_pool(x, ksize=[1, 2, 2, 1],
-                              strides=[1, 2, 2, 1], padding="SAME")
+        return tf.nn.max_pool(x,
+                              ksize=[1, 2, 2, 1],
+                              strides=[1, 2, 2, 1],
+                              padding="SAME")
 
     def set_initial_state(self):
         self.game = main.Game()
@@ -83,13 +87,10 @@ class DQN(object):
         return s_t
 
     def update_state(self, state):
-        state_next = cv.cvtColor(
-            cv.resize(state, (80, 80)), cv.COLOR_BGR2GRAY)
-        ret, state_next = cv.threshold(
-            state_next, 1, 255, cv.THRESH_BINARY)
+        state_next = cv.cvtColor(cv.resize(state, (80, 80)), cv.COLOR_BGR2GRAY)
+        ret, state_next = cv.threshold(state_next, 1, 255, cv.THRESH_BINARY)
         state_next = np.reshape(state_next, (80, 80, 1))
-        state_next = np.append(
-            state_next, self.currentState[:, :, :3], axis=2)
+        state_next = np.append(state_next, self.currentState[:, :, :3], axis=2)
         return state_next
 
     def load_saved_network(self):
@@ -100,8 +101,8 @@ class DQN(object):
         if checkpoint and checkpoint.model_checkpoint_path:
             self.saver.restore(self.sess, checkpoint.model_checkpoint_path)
             self.step = int(checkpoint.model_checkpoint_path.split('-')[-1])
-            logging.info("Successfully loaded: %s"
-                         % checkpoint.model_checkpoint_path)
+            logging.info("Successfully loaded: %s" %
+                         checkpoint.model_checkpoint_path)
         else:
             logging.info("Could not find old network weights")
 
@@ -186,8 +187,9 @@ class DQN(object):
         self.q_target = tf.placeholder("float", [None])
 
         # readout_action -- reward of selected action by a.
-        self.q_eval = tf.reduce_sum(
-            tf.multiply(self.net_readout, self.action_input), axis=1)
+        self.q_eval = tf.reduce_sum(tf.multiply(self.net_readout,
+                                                self.action_input),
+                                    axis=1)
         self.cost = tf.reduce_mean(tf.square(self.q_target - self.q_eval))
         tf.summary.scalar('loss', self.cost)
         self.train_step = tf.train.AdamOptimizer(1e-6).minimize(self.cost)

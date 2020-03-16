@@ -48,8 +48,8 @@ class DoubleDQN(object):
         self.create_network()
 
         gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.333)
-        self.sess = tf.InteractiveSession(
-            config=tf.ConfigProto(gpu_options=gpu_options))
+        self.sess = tf.InteractiveSession(config=tf.ConfigProto(
+            gpu_options=gpu_options))
 
         self.load_saved_network()
 
@@ -62,12 +62,16 @@ class DoubleDQN(object):
         return tf.Variable(initial, trainable=trainable)
 
     def conv2d(self, x, W, stride=1):
-        return tf.nn.conv2d(
-            x, W, strides=[1, stride, stride, 1], padding="SAME")
+        return tf.nn.conv2d(x,
+                            W,
+                            strides=[1, stride, stride, 1],
+                            padding="SAME")
 
     def max_pool_2x2(self, x):
-        return tf.nn.max_pool(x, ksize=[1, 2, 2, 1],
-                              strides=[1, 2, 2, 1], padding="SAME")
+        return tf.nn.max_pool(x,
+                              ksize=[1, 2, 2, 1],
+                              strides=[1, 2, 2, 1],
+                              padding="SAME")
 
     def set_initial_state(self, x_t):
         x_t = cv.cvtColor(cv.resize(x_t, (80, 80)), cv.COLOR_BGR2GRAY)
@@ -76,13 +80,10 @@ class DoubleDQN(object):
         return s_t
 
     def update_state(self, state):
-        state_next = cv.cvtColor(
-            cv.resize(state, (80, 80)), cv.COLOR_BGR2GRAY)
-        ret, state_next = cv.threshold(
-            state_next, 1, 255, cv.THRESH_BINARY)
+        state_next = cv.cvtColor(cv.resize(state, (80, 80)), cv.COLOR_BGR2GRAY)
+        ret, state_next = cv.threshold(state_next, 1, 255, cv.THRESH_BINARY)
         state_next = np.reshape(state_next, (80, 80, 1))
-        state_next = np.append(
-            state_next, self.currentState[:, :, :3], axis=2)
+        state_next = np.append(state_next, self.currentState[:, :, :3], axis=2)
         return state_next
 
     def load_saved_network(self):
@@ -93,8 +94,8 @@ class DoubleDQN(object):
         if checkpoint and checkpoint.model_checkpoint_path:
             self.saver.restore(self.sess, checkpoint.model_checkpoint_path)
             self.step = int(checkpoint.model_checkpoint_path.split('-')[-1])
-            logging.info("Successfully loaded: %s"
-                         % checkpoint.model_checkpoint_path)
+            logging.info("Successfully loaded: %s" %
+                         checkpoint.model_checkpoint_path)
         else:
             logging.info("Could not find old network weights")
 
@@ -167,8 +168,7 @@ class DoubleDQN(object):
             W_conv1_t = self.weight_variable([8, 8, 4, 32], trainable=False)
             b_conv1_t = self.bias_variable([32], trainable=False)
             # Output Shape: [None, 20, 20, 32]
-            h_conv1_t = self.conv2d(
-                self.target_net_input, W_conv1_t, stride=4)
+            h_conv1_t = self.conv2d(self.target_net_input, W_conv1_t, stride=4)
             h_relu1_t = tf.nn.relu(h_conv1_t + b_conv1_t)
             # Output Shape: [None, 10, 10, 32]
             h_pool1_t = self.max_pool_2x2(h_relu1_t)
@@ -200,21 +200,23 @@ class DoubleDQN(object):
             self.readout_t = tf.matmul(h_fc1_t, W_fc2_t) + b_fc2_t
 
             # parameter transfer
-            t_params = tf.get_collection(
-                tf.GraphKeys.GLOBAL_VARIABLES, scope='target_net')
-            e_params = tf.get_collection(
-                tf.GraphKeys.GLOBAL_VARIABLES, scope='eval_net')
+            t_params = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES,
+                                         scope='target_net')
+            e_params = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES,
+                                         scope='eval_net')
 
             with tf.variable_scope('soft_replacement'):
                 self.target_replace_op = [
-                    tf.assign(t, e) for t, e in zip(t_params, e_params)]
+                    tf.assign(t, e) for t, e in zip(t_params, e_params)
+                ]
 
             # build train network
             self.action_input = tf.placeholder("float", [None, ACTIONS])
             self.q_target = tf.placeholder("float", [None])
 
-            self.q_eval = tf.reduce_sum(
-                tf.multiply(self.readout_e, self.action_input), axis=1)
+            self.q_eval = tf.reduce_sum(tf.multiply(self.readout_e,
+                                                    self.action_input),
+                                        axis=1)
             # readout_action -- reward of selected action by a.
             self.cost = tf.reduce_mean(tf.square(self.q_target - self.q_eval))
             tf.summary.scalar('loss', self.cost)

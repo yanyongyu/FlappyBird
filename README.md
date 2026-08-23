@@ -1,3 +1,5 @@
+
+
 # Flappy Bird
 
 ## <span id="overview">Overview</span>
@@ -128,5 +130,7 @@ Change the network into two parts: target_net and eval_net.
 - use target network to calculate the target Q value of taking that action at the next state.
 
 The model can converge much faster. At about 175w step, the score has a dramatic growth.
+
+Model will be saved in ./ddqn_model/ and logs will be saved in ./ddqn_logs/
 
 <img src="./img/ddqn.gif" width="250">
